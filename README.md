@@ -1,4 +1,4 @@
-# Uncharted-Lands  Keşfedilmemiş Topraklar
+# Uncharted-Lands | Keşfedilmemiş Topraklar
 
 # Hikaye
 Oyuncu, bir deniz yolculuğunda meydana gelen bir kaza sonucu gemisinin alabora olmasıyla bilincini kaybeder. Uyandığında, kendisini ıssız bir adada bulur. Ada, hayvanlar, soğuk hava, açlık ve susuzluk gibi temel zorluklarla dolu bir yerdir.
