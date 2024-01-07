@@ -7,7 +7,7 @@ public class PlayerMovementController : MonoBehaviour
     private CharacterController characterController;
 
     [SerializeField] private float movementSpeed;
-    [SerializeField] private float gravity = -9.81f * 2;
+    [SerializeField] private float gravity;
     [SerializeField] private float jumpHeight;
 
     //GROUND CHECK

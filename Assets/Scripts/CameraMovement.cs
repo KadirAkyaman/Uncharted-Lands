@@ -11,26 +11,28 @@ public class CameraMovementController : MonoBehaviour
 
     void Start()
     {
-        //Locking the cursor to the middle of the screen and making it invisible
         Cursor.lockState = CursorLockMode.Locked;
     }
 
     void Update()
     {
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+        if (!InventorySystem.Instance.isOpen)
+        {
+            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        //Yukari Asagi
-        xRotation -= mouseY;
+            //Yukari Asagi
+            xRotation -= mouseY;
 
-        //Clamp
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+            //Clamp
+            xRotation = Mathf.Clamp(xRotation, -90f, 90f);
 
-        //Saga Sola
-        YRotation += mouseX;
+            //Saga Sola
+            YRotation += mouseX;
 
-        //applying both rotations
-        transform.localRotation = Quaternion.Euler(xRotation, YRotation, 0f);
+            //applying both rotations
+            transform.localRotation = Quaternion.Euler(xRotation, YRotation, 0f);
+        }
 
     }
 }
