@@ -2,14 +2,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class InventorySystem : MonoBehaviour
 {
-
+    public GameObject ItemInfoUI;
     public static InventorySystem Instance { get; set; }
 
     public GameObject inventoryScreenUI;
-    
+
 
     public List<GameObject> SlotList = new List<GameObject>();
 
@@ -22,6 +23,12 @@ public class InventorySystem : MonoBehaviour
     public bool isOpen;
 
     public bool isFull;
+
+
+    //PickUp PopUp
+    public GameObject pickupAlert;
+    public Text pickupName;
+    public Image pickupImage;
 
     private void Awake()
     {
@@ -41,13 +48,15 @@ public class InventorySystem : MonoBehaviour
         isOpen = false;
         isFull = false;
         FillSlotList();
+
+        //Cursor.visible = false;
     }
 
 
 
     private void FillSlotList()
     {
-        foreach(Transform child in inventoryScreenUI.transform)
+        foreach (Transform child in inventoryScreenUI.transform)
         {
             if (child.CompareTag("InventorySlot"))
             {
@@ -62,14 +71,29 @@ public class InventorySystem : MonoBehaviour
         {
             inventoryScreenUI.SetActive(true);
             Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
+
+            SelectionManager.Instance.DisableSelection();
+            SelectionManager.Instance.GetComponent<SelectionManager>().enabled = false;
+
+
             isOpen = true;
+
 
         }
         else if (Input.GetKeyDown(KeyCode.I) && isOpen)
         {
             inventoryScreenUI.SetActive(false);
-            Cursor.lockState = CursorLockMode.Locked;
+            if (!CraftingSystem.Instance.isOpen)
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+
+                SelectionManager.Instance.EnableSelection();
+                SelectionManager.Instance.GetComponent<SelectionManager>().enabled = true;
+            }
             isOpen = false;
+
         }
     }
 
@@ -84,19 +108,80 @@ public class InventorySystem : MonoBehaviour
         {
             nextSlotToEquip = FindNextEmptySlot();
 
-            itemToAdd = Instantiate(Resources.Load<GameObject>(itemName),nextSlotToEquip.transform.position,nextSlotToEquip.transform.rotation);
+            itemToAdd = Instantiate(Resources.Load<GameObject>(itemName), nextSlotToEquip.transform.position, nextSlotToEquip.transform.rotation);
             itemToAdd.transform.SetParent(nextSlotToEquip.transform);
 
             ItemList.Add(itemName);
+
+            TriggerPickupPopUp(itemName, itemToAdd.GetComponent<Image>().sprite);
+
+
+            ReSizeList();
+            CraftingSystem.Instance.RefreshInventory();
+
         }
 
     }
 
+    private void TriggerPickupPopUp(string itemName, Sprite itemSprite)                                             //POPUP ALERT
+    {
+        pickupAlert.SetActive(true);
+        pickupName.text = itemName;
+        pickupImage.sprite = itemSprite;
+        StartCoroutine(PopUpAnim(pickupAlert));
+    }
+
+    IEnumerator PopUpAnim(GameObject alert)
+    {
+        yield return new WaitForSeconds(1f);
+        alert.SetActive(false);
+    }
+
+
+    public void RemoveItem(string nameOfTheObjectToBeDeleted, int amountOfObjectToDelete)
+    {
+        int counter = amountOfObjectToDelete;
+
+        for (var i = SlotList.Count - 1; i >= 0; i--)
+        {
+            if (SlotList[i].transform.childCount > 0)
+            {
+                if (SlotList[i].transform.GetChild(0).name == nameOfTheObjectToBeDeleted + "(Clone)" && counter != 0)
+                {
+                    DestroyImmediate(SlotList[i].transform.GetChild(0).gameObject);
+
+                    counter--;
+                }
+            }
+        }
+
+        ReSizeList();
+        CraftingSystem.Instance.RefreshInventory();
+    }
+
+    public void ReSizeList()
+    {
+        ItemList.Clear();
+
+        foreach (GameObject slot in SlotList)
+        {
+            if (slot.transform.childCount > 0)
+            {
+                string name = slot.transform.GetChild(0).name;
+                string stringName = name;
+                string stringTag = "(Clone)";
+                string resultName = name.Replace(stringTag, "");
+                ItemList.Add(resultName);
+            }
+        }
+    }
+
+
     private GameObject FindNextEmptySlot()
     {
-        foreach(GameObject slot in SlotList)
+        foreach (GameObject slot in SlotList)
         {
-            if (slot.transform.childCount==0)
+            if (slot.transform.childCount == 0)
             {
                 return slot;
             }
@@ -110,7 +195,7 @@ public class InventorySystem : MonoBehaviour
 
         foreach (GameObject slot in SlotList)
         {
-            if (slot.transform.childCount>0)
+            if (slot.transform.childCount > 0)
             {
                 counter++;
             }

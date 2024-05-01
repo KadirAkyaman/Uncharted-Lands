@@ -1,0 +1,155 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
+
+public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
+{
+
+    public bool isTrashable;
+
+
+    private GameObject itemInfoUI;
+
+    private Text itemInfoUI_itemName;
+    private Text itemInfoUI_itemDescription;
+    private Text itemInfoUI_itemFunctionality;
+
+    public string thisName, thisDescription, thisFunctionality;
+
+    // --- Consumption --- //
+    private GameObject itemPendingConsumption;
+    public bool isConsumable;
+
+    public float healthEffect;
+    public float caloriesEffect;
+
+    //Equipping
+
+    public bool isEquippable;
+    private GameObject itemPendingEquipping;
+    public bool isInsideQuickSlot;//quick slotlardaki item
+
+    public bool isSelected;//secili item
+
+
+    private void Start()
+    {
+        itemInfoUI = InventorySystem.Instance.ItemInfoUI;
+        itemInfoUI_itemName = itemInfoUI.transform.Find("itemName").GetComponent<Text>();
+        itemInfoUI_itemDescription = itemInfoUI.transform.Find("itemDescription").GetComponent<Text>();
+        itemInfoUI_itemFunctionality = itemInfoUI.transform.Find("itemFunctionality").GetComponent<Text>();
+    }
+
+    private void Update()
+    {
+        if (isSelected)
+        {
+            gameObject.GetComponent<DragDrop>().enabled = false;
+        }
+        else
+        {
+            gameObject.GetComponent<DragDrop>().enabled = true;
+        }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        itemInfoUI.SetActive(true);
+        itemInfoUI_itemName.text = thisName;
+        itemInfoUI_itemDescription.text = thisDescription;
+        itemInfoUI_itemFunctionality.text = thisFunctionality;
+    }
+
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        itemInfoUI.SetActive(false);
+    }
+
+    public void OnPointerDown(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            if (isConsumable)
+            {
+                itemPendingConsumption = gameObject;
+                consumingFunction(healthEffect, caloriesEffect);
+            }
+
+            if (isEquippable && isInsideQuickSlot == false && EquipSystem.Instance.CheckIfFull() == false)
+            {
+                EquipSystem.Instance.AddToQuickSlots(gameObject);
+                isInsideQuickSlot = true;
+            }
+        }
+
+
+    }
+
+    public void OnPointerUp(PointerEventData eventData)
+    {
+        if (eventData.button == PointerEventData.InputButton.Right)
+        {
+            if (isConsumable && itemPendingConsumption == gameObject)
+            {
+                DestroyImmediate(gameObject);
+                InventorySystem.Instance.ReSizeList();
+                CraftingSystem.Instance.RefreshInventory();
+            }
+        }
+    }
+
+    private void consumingFunction(float healthEffect, float caloriesEffect)
+    {
+        itemInfoUI.SetActive(false);
+
+        healthEffectCalculation(healthEffect);
+
+        caloriesEffectCalculation(caloriesEffect);
+
+    }
+
+
+    private static void healthEffectCalculation(float healthEffect)
+    {
+        // --- Health --- //
+
+        float healthBeforeConsumption = PlayerState.Instance.currentHealth;
+        float maxHealth = PlayerState.Instance.maxHealth;
+
+        if (healthEffect != 0)
+        {
+            if ((healthBeforeConsumption + healthEffect) > maxHealth)
+            {
+                PlayerState.Instance.setHealth(maxHealth);
+            }
+            else
+            {
+                PlayerState.Instance.setHealth(healthBeforeConsumption + healthEffect);
+            }
+        }
+    }
+
+
+    private static void caloriesEffectCalculation(float caloriesEffect)
+    {
+        // --- Calories --- //
+
+        float caloriesBeforeConsumption = PlayerState.Instance.currentFullnes;
+        float maxCalories = PlayerState.Instance.maxFullnes;
+
+        if (caloriesEffect != 0)
+        {
+            if ((caloriesBeforeConsumption + caloriesEffect) > maxCalories)
+            {
+                PlayerState.Instance.setCalories(maxCalories);
+            }
+            else
+            {
+                PlayerState.Instance.setCalories(caloriesBeforeConsumption + caloriesEffect);
+            }
+        }
+    }
+}

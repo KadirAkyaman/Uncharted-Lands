@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 8544882093768871799}
   - component: {fileID: -1258738292300602755}
   - component: {fileID: 1874791085154602953}
+  - component: {fileID: 5865089402285485212}
   m_Layer: 5
   m_Name: Stone
   m_TagString: Untagged
@@ -38,7 +39,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!222 &2495706829092432382
 CanvasRenderer:
@@ -102,3 +103,25 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &5865089402285485212
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6397220121940038946}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f14c023aab94f0b459a44daebaad2452, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isTrashable: 1
+  thisName: Stone
+  thisDescription: Just a piece of stone.
+  thisFunctionality: Helps to craft items.
+  isConsumable: 0
+  healthEffect: 0
+  caloriesEffect: 0
+  isEquippable: 1
+  isInsideQuickSlot: 0
+  isSelected: 0
