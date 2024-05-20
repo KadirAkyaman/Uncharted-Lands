@@ -64,7 +64,7 @@ public class ChoppableTree : MonoBehaviour
         canBeChopped = false;
         SelectionManager.Instance.selectedTree = null;
         SelectionManager.Instance.chopHolder.gameObject.SetActive(false);
-        
+        SoundManager.Instance.PlaySound(SoundManager.Instance.treeFallingSound);
         GameObject brokenTree = Instantiate(Resources.Load<GameObject>("ChoppedTree"),new Vector3(treePosition.x,treePosition.y+0.3f,treePosition.z), Quaternion.Euler(0,0,0));
     }
 

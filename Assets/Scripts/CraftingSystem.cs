@@ -6,26 +6,29 @@ using UnityEngine.UI;
 
 public class CraftingSystem : MonoBehaviour
 {
-    public GameObject CraftingScreenUI;
-    public GameObject ToolsScreenUI;
+    public GameObject craftingScreenUI;
+    public GameObject toolsScreenUI, survivalScreenUI, processScreenUI, buildingScreenUI;
 
-    public List<string> InventoryItemList = new List<string>();
-
+    //public List<string> InventoryItemList = new List<string>();
+    public List<string> InventoryItemList;
     //Category
-    private Button toolsButton;
+    private Button toolsButton, survivalButton, processButton, buildingButton;
 
     //Craft
-    private Button craftAxeButton;
+    private Button craftAxeButton, craftPlankButton, craftFoundationButton, craftWallButton;
 
     //Req
-    Text axeReq1, axeReq2;
+    Text axeReq1, axeReq2, plankReq1, foundationReq1, wallReq1;
 
     public bool isOpen;
 
     //CRAFTING RECIPE
-    public CraftingRecipe AxeRecipe = new CraftingRecipe("Axe", 2, "Stone", 3, "Stick", 2);
+    public CraftingRecipe AxeRecipe = new CraftingRecipe("Axe",1 , 2, "Stone", 3, "Stick", 2);
+    public CraftingRecipe PlankRecipe = new CraftingRecipe("Plank",2 , 1, "Log", 1, "", 0);
 
+    public CraftingRecipe FoundationRecipe = new CraftingRecipe("Foundation",1 , 1, "Plank", 4, "", 0);
 
+    public CraftingRecipe WallRecipe = new CraftingRecipe("Wall",1 , 1, "Plank", 2, "", 0);
 
     public static CraftingSystem Instance { get; set; }
 
@@ -44,21 +47,52 @@ public class CraftingSystem : MonoBehaviour
     void Start()
     {
         isOpen = false;
-        toolsButton = CraftingScreenUI.transform.Find("ToolsButton").GetComponent<Button>();
+        
+        toolsButton = craftingScreenUI.transform.Find("ToolsButton").GetComponent<Button>();
         toolsButton.onClick.AddListener(delegate { OpenToolsPanel(); });//butona tiklandiginda metodu calistir
+
+        buildingButton = craftingScreenUI.transform.Find("BuildingButton").GetComponent<Button>();
+        buildingButton.onClick.AddListener(delegate { OpenBuildingPanel(); });//butona tiklandiginda metodu calistir
+
+        survivalButton = craftingScreenUI.transform.Find("SurvivalButton").GetComponent<Button>();
+        survivalButton.onClick.AddListener(delegate { OpenSurvivalPanel(); });//butona tiklandiginda metodu calistir
+
+        processButton = craftingScreenUI.transform.Find("ProcessButton").GetComponent<Button>();
+        processButton.onClick.AddListener(delegate { OpenProcessPanel(); });//butona tiklandiginda metodu calistir
 
 
         //AXE REQ
-        axeReq1 = ToolsScreenUI.transform.Find("Axe").transform.Find("req1").GetComponent<Text>();
-        axeReq2 = ToolsScreenUI.transform.Find("Axe").transform.Find("req2").GetComponent<Text>();
+        axeReq1 = toolsScreenUI.transform.Find("Axe").transform.Find("req1").GetComponent<Text>();
+        axeReq2 = toolsScreenUI.transform.Find("Axe").transform.Find("req2").GetComponent<Text>();
 
-        craftAxeButton = ToolsScreenUI.transform.Find("Axe").transform.Find("Button").GetComponent<Button>();
+        craftAxeButton = toolsScreenUI.transform.Find("Axe").transform.Find("Button").GetComponent<Button>();
         craftAxeButton.onClick.AddListener(delegate { CraftItem(AxeRecipe); });
+
+        //PLANK REQ
+        plankReq1 = processScreenUI.transform.Find("Plank").transform.Find("req1").GetComponent<Text>();
+
+        craftPlankButton = processScreenUI.transform.Find("Plank").transform.Find("Button").GetComponent<Button>();
+        craftPlankButton.onClick.AddListener(delegate { CraftItem(PlankRecipe); });
+
+        //FOUNDATION REQ
+        foundationReq1 = buildingScreenUI.transform.Find("Foundation").transform.Find("req1").GetComponent<Text>();
+
+        craftFoundationButton = buildingScreenUI.transform.Find("Foundation").transform.Find("Button").GetComponent<Button>();
+        craftFoundationButton.onClick.AddListener(delegate { CraftItem(FoundationRecipe); });
+
+        //WALL REQ
+        wallReq1 = buildingScreenUI.transform.Find("Wall").transform.Find("req1").GetComponent<Text>();
+
+        craftWallButton = buildingScreenUI.transform.Find("Wall").transform.Find("Button").GetComponent<Button>();
+        craftWallButton.onClick.AddListener(delegate { CraftItem(WallRecipe); });
     }
 
     private void CraftItem(CraftingRecipe recipeToCraft)//ESYALARI CRAFT ETME BOLUMU
     {
-        InventorySystem.Instance.AddToInventory(recipeToCraft.ItemName);
+
+        SoundManager.Instance.PlaySound(SoundManager.Instance.craftingSound);
+        //ESYALARIN SAYISINA GORE ENVANTERE EKLEMEK
+        StartCoroutine(craftedDelayForSound(recipeToCraft));
 
         if (recipeToCraft.numOfReqs == 1)//EGER CRAFT ICIN 1 ESYA GEREKLIYSE
         {
@@ -70,26 +104,52 @@ public class CraftingSystem : MonoBehaviour
             InventorySystem.Instance.RemoveItem(recipeToCraft.Req2, recipeToCraft.Req2Amount);
         }
 
-
+    
         StartCoroutine(calculate());
 
-
-        
     }
 
     void OpenToolsPanel()
     {
-        CraftingScreenUI.SetActive(false);
-        ToolsScreenUI.SetActive(true);
+        craftingScreenUI.SetActive(false);
+        processScreenUI.SetActive(false);
+        survivalScreenUI.SetActive(false);
+        buildingScreenUI.SetActive(false);
+        toolsScreenUI.SetActive(true);
+    }
+
+    void OpenBuildingPanel()
+    {
+        craftingScreenUI.SetActive(false);
+        processScreenUI.SetActive(false);
+        survivalScreenUI.SetActive(false);
+        toolsScreenUI.SetActive(false);
+        buildingScreenUI.SetActive(true);
+    }
+    void OpenSurvivalPanel()
+    {
+        craftingScreenUI.SetActive(false);
+        toolsScreenUI.SetActive(false);
+        processScreenUI.SetActive(false);
+        buildingScreenUI.SetActive(false);
+        survivalScreenUI.SetActive(true);
+    }
+
+    void OpenProcessPanel()
+    {
+        craftingScreenUI.SetActive(false);
+        toolsScreenUI.SetActive(false);
+        survivalScreenUI.SetActive(false);
+        buildingScreenUI.SetActive(false);
+        processScreenUI.SetActive(true);
     }
     void Update()
     {
-        
 
 
-        if (Input.GetKeyDown(KeyCode.C) && !isOpen)
+        if (Input.GetKeyDown(KeyCode.C) && !isOpen && !ConstructionManager.Instance.inConstructionMode)
         {
-            CraftingScreenUI.SetActive(true);
+            craftingScreenUI.SetActive(true);
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
 
@@ -101,8 +161,12 @@ public class CraftingSystem : MonoBehaviour
         }
         else if (Input.GetKeyDown(KeyCode.C) && isOpen)
         {
-            CraftingScreenUI.SetActive(false);
-            ToolsScreenUI.SetActive(false);
+            craftingScreenUI.SetActive(false);
+            buildingScreenUI.SetActive(false);
+            toolsScreenUI.SetActive(false);
+            survivalScreenUI.SetActive(false);
+            processScreenUI.SetActive(false);
+
             if (!InventorySystem.Instance.isOpen)
             {
                 Cursor.lockState = CursorLockMode.Locked;
@@ -119,6 +183,8 @@ public class CraftingSystem : MonoBehaviour
     {
         int stoneCount = 0;//inventory icin gerekli malzemeler buraya eklenecek
         int stickCount = 0;
+        int logCount = 0;
+        int plankCount = 0;
 
         InventoryItemList = InventorySystem.Instance.ItemList;
 
@@ -133,32 +199,64 @@ public class CraftingSystem : MonoBehaviour
                 case "Stick":
                     stickCount += 1;
                     break;
+
+                case "Log":
+                    logCount += 1;
+                    break;   
+
+                case "Plank":
+                    plankCount +=1;
+                    break; 
             }
         }
 
         //AXE
-        //axeReq1.text =  AxeRecipe.Req1Amount + " " + AxeRecipe.Req1 + " " + "[" + stoneCount + "]";
-        //axeReq2.text =  AxeRecipe.Req2Amount + " " + AxeRecipe.Req2 + " " + "[" + stickCount + "]";
-
         axeReq1.text = "3 Stone [" + stoneCount + "]";
         axeReq2.text = "2 Stick [" + stickCount + "]";
 
-        //if (stoneCount >= AxeRecipe.Req1Amount && stickCount >= AxeRecipe.Req2Amount)
-        //{
-        //    craftAxeButton.gameObject.SetActive(true);
-        //}
-        //else
-        //{
-        //    craftAxeButton.gameObject.SetActive(false);
-        //}
-
-        if (stoneCount >= 3 && stickCount >= 2)
+        if (stoneCount >= 3 && stickCount >= 2 && InventorySystem.Instance.CheckSlotsAvailable(1))
         {
             craftAxeButton.gameObject.SetActive(true);
         }
         else
         {
             craftAxeButton.gameObject.SetActive(false);
+        }
+
+        //PLANK
+        plankReq1.text = "1 Log [" + logCount + "]";
+
+        if (logCount >= 1 && InventorySystem.Instance.CheckSlotsAvailable(2))
+        {
+            craftPlankButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            craftPlankButton.gameObject.SetActive(false);
+        }
+
+        //FOUNDATION
+        foundationReq1.text = "4 Plank [" + logCount + "]";
+
+        if (plankCount >= 4 && InventorySystem.Instance.CheckSlotsAvailable(1))
+        {
+            craftFoundationButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            craftFoundationButton.gameObject.SetActive(false);
+        }
+
+        //WALL
+        wallReq1.text = "2 Plank [" + logCount + "]";
+
+        if (plankCount >= 2 && InventorySystem.Instance.CheckSlotsAvailable(1))
+        {
+            craftWallButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            craftWallButton.gameObject.SetActive(false);
         }
     }
 
@@ -167,5 +265,15 @@ public class CraftingSystem : MonoBehaviour
         yield return 0;
         InventorySystem.Instance.ReSizeList();
         RefreshInventory();
+    }
+
+    IEnumerator craftedDelayForSound(CraftingRecipe recipeToCraft) 
+    {
+        yield return new WaitForSeconds(1f);
+        
+        for (var i = 0; i < recipeToCraft.numOfItemsToProduce; i++)
+        {
+            InventorySystem.Instance.AddToInventory(recipeToCraft.ItemName);
+        }
     }
 }

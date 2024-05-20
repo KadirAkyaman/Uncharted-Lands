@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -93,7 +94,7 @@ public class EquipSystem : MonoBehaviour
                 selectedItem = GetSelectedItem(number);
                 selectedItem.GetComponent<InventoryItem>().isSelected = true;
 
-                SetEquippedModel(selectedItem);//burada sprite gonderiliyor
+                SetEquippedModel(selectedItem);
 
                 //Change Color
 
@@ -211,6 +212,49 @@ public class EquipSystem : MonoBehaviour
         if (counter == 7)
         {
             return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    internal bool IsHoldingWeapon()
+    {
+        if (selectedItem!=null)
+        {
+            if (selectedItem.GetComponent<Weapon>()!=null)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    internal int GetWeaponDamage()
+    {
+        if (selectedItem!=null) //eger esya tutuyorsak
+        {
+            return selectedItem.GetComponent<Weapon>().weaponDamage;
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    internal bool IsThereASwingLock()
+    {
+        if (selectedItemModel && selectedItem.GetComponent<EquipableItem>())
+        {
+            return selectedItemModel.GetComponent<EquipableItem>().swingWait;
         }
         else
         {

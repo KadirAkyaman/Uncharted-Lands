@@ -67,59 +67,63 @@ public class InventorySystem : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.I) && !isOpen)
+        if (Input.GetKeyDown(KeyCode.I) && !isOpen && !ConstructionManager.Instance.inConstructionMode)
         {
-            inventoryScreenUI.SetActive(true);
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
-
-            SelectionManager.Instance.DisableSelection();
-            SelectionManager.Instance.GetComponent<SelectionManager>().enabled = false;
-
-
-            isOpen = true;
-
-
+            OpenUI();
         }
         else if (Input.GetKeyDown(KeyCode.I) && isOpen)
         {
-            inventoryScreenUI.SetActive(false);
-            if (!CraftingSystem.Instance.isOpen)
-            {
-                Cursor.lockState = CursorLockMode.Locked;
-                Cursor.visible = false;
-
-                SelectionManager.Instance.EnableSelection();
-                SelectionManager.Instance.GetComponent<SelectionManager>().enabled = true;
-            }
-            isOpen = false;
-
+            CloseUI();
         }
+    }
+
+    public void OpenUI()
+    {
+        inventoryScreenUI.SetActive(true);
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        SelectionManager.Instance.DisableSelection();
+        SelectionManager.Instance.GetComponent<SelectionManager>().enabled = false;
+
+        isOpen = true;
+    }
+
+    public void CloseUI()
+    {
+        inventoryScreenUI.SetActive(false);
+        
+        if (!CraftingSystem.Instance.isOpen && !CampfireUIManager.Instance.isUIOpen)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+
+            SelectionManager.Instance.EnableSelection();
+            SelectionManager.Instance.GetComponent<SelectionManager>().enabled = true;
+        }
+
+        isOpen = false;
     }
 
     public void AddToInventory(string itemName)
     {
+        SoundManager.Instance.PlaySound(SoundManager.Instance.pickUpSound);
 
-        if (IsInventoryFull())
-        {
-            isFull = true;
-        }
-        else
-        {
-            nextSlotToEquip = FindNextEmptySlot();
+        nextSlotToEquip = FindNextEmptySlot();
 
-            itemToAdd = Instantiate(Resources.Load<GameObject>(itemName), nextSlotToEquip.transform.position, nextSlotToEquip.transform.rotation);
-            itemToAdd.transform.SetParent(nextSlotToEquip.transform);
+        itemToAdd = Instantiate(Resources.Load<GameObject>(itemName), nextSlotToEquip.transform.position, nextSlotToEquip.transform.rotation);
+        itemToAdd.transform.SetParent(nextSlotToEquip.transform);
 
-            ItemList.Add(itemName);
+        ItemList.Add(itemName);
 
-            TriggerPickupPopUp(itemName, itemToAdd.GetComponent<Image>().sprite);
+        TriggerPickupPopUp(itemName, itemToAdd.GetComponent<Image>().sprite);
 
 
-            ReSizeList();
-            CraftingSystem.Instance.RefreshInventory();
+        ReSizeList();
+        CraftingSystem.Instance.RefreshInventory();
 
-        }
+        
 
     }
 
@@ -189,18 +193,20 @@ public class InventorySystem : MonoBehaviour
         return new GameObject();
     }
 
-    private bool IsInventoryFull()
+    public bool CheckSlotsAvailable(int emptyNeeded)
     {
-        int counter = 0;
+        int emptySlot = 0;
 
         foreach (GameObject slot in SlotList)
         {
-            if (slot.transform.childCount > 0)
+            if (slot.transform.childCount <= 0)
             {
-                counter++;
+                emptySlot++;
             }
         }
-        if (counter == 21)
+        Debug.Log(emptySlot);
+
+        if (emptySlot >= emptyNeeded)
         {
             return true;
         }

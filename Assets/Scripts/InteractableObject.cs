@@ -17,10 +17,10 @@ public class InteractableObject : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Mouse0) && PlayerInRange && SelectionManager.Instance.onTarget && SelectionManager.Instance.SelectedObject == gameObject) // eger e tusuna basilirsa objeyi envantere ekle
         {
 
-            if (!InventorySystem.Instance.isFull)
+            if (InventorySystem.Instance.CheckSlotsAvailable(1))
             {
                 InventorySystem.Instance.AddToInventory(ItemName);
-                gameObject.SetActive(false);
+                Destroy(gameObject);
             }
             else
             {

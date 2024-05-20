@@ -7,7 +7,8 @@ public class PlayerMovementController : MonoBehaviour
     private CharacterController characterController;
 
     [SerializeField] private float movementSpeed;
-    [SerializeField] private float gravity;
+    private float gravity;
+    public float walkingGravity = -50;
     [SerializeField] private float jumpHeight;
 
     //GROUND CHECK
@@ -19,15 +20,44 @@ public class PlayerMovementController : MonoBehaviour
 
     bool isGrounded;
 
+    public bool isSwimming;
+    public float swimmingGravity = -0.5f;
 
+    //GRASS SOUNDFX
+    private Vector3 lastPos = new Vector3(0,0,0);
+    public bool isMoving;
+    public bool isUnderWater;
 
     void Start()
     {
+        isSwimming = false;
         characterController = GetComponent<CharacterController>();
     }
 
     void Update()
     {
+        if (CampfireUIManager.Instance.isUIOpen == false)
+        {
+            Movement();
+        }
+        
+    }
+
+    void Movement()
+    {
+        if (isSwimming)
+        {
+            if (isUnderWater)
+            {
+                
+            }
+            gravity = swimmingGravity;
+        }
+        else
+        {
+            gravity = walkingGravity;
+        }
+
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
         if (isGrounded && velocity.y < 0)
@@ -51,5 +81,22 @@ public class PlayerMovementController : MonoBehaviour
         velocity.y += gravity * Time.deltaTime;
 
         characterController.Move(velocity * Time.deltaTime);
+
+
+        //WALK SFX
+        if (lastPos != gameObject.transform.position && isGrounded == true)
+        {
+            isMoving = true;
+
+            SoundManager.Instance.PlaySound(SoundManager.Instance.grassWalkSound);
+        }
+        else
+        {
+            isMoving = false;
+
+            SoundManager.Instance.grassWalkSound.Stop();
+        }
+
+        lastPos = gameObject.transform.position;
     }
 }

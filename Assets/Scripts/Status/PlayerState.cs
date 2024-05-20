@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -36,6 +37,16 @@ public class PlayerState : MonoBehaviour
     private float energyLoss;
     private float jumpEnergyLoss;
 
+    [Header("Oxygene Variables")]
+    public float currentOxygenPercent;
+    public float maxOxygenPercent = 100;
+    public float oxygenDecreasedPerSecond = 5f;
+    private float oxygenTimer = 0f;
+    private float decreaseInterval = 1f;
+
+    public float outOfAirDamagePerSecond = 5f;
+
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -52,6 +63,7 @@ public class PlayerState : MonoBehaviour
         currentHealth = maxHealth;
         currentFullnes = maxFullnes;
         currentEnergy = maxEnergy;
+        currentOxygenPercent = maxOxygenPercent;
 
         energyLoss = energyDecreaseAmount * Time.deltaTime;
         jumpEnergyLoss = jumpEnergyDecreaseAmount * Time.deltaTime;
@@ -60,7 +72,24 @@ public class PlayerState : MonoBehaviour
 
     void Update()
     {
-        //CharacterStateController
+        if(player.GetComponent<PlayerMovementController>().isUnderWater)
+        {
+            oxygenTimer += Time.deltaTime;
+
+            if (oxygenTimer >= decreaseInterval)
+            {
+                DecreaseOxygen();
+                oxygenTimer = 0;
+            }
+        }
+
+
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            currentHealth -=10;
+            currentFullnes -=10;
+        }
+
         if (Input.GetKeyDown(KeyCode.Space))
         {
             currentState = CharacterState.Jump;
@@ -113,6 +142,17 @@ public class PlayerState : MonoBehaviour
             currentEnergy = minEnergy;
         }
 
+    }
+
+    private void DecreaseOxygen()                                          //DECREASE HEALTH
+    {
+        currentOxygenPercent -= oxygenDecreasedPerSecond;
+
+        if (currentOxygenPercent < 0)
+        {
+            currentOxygenPercent = 0;
+            setHealth(currentHealth - outOfAirDamagePerSecond); 
+        }
     }
 
     public void setHealth(float newHealth)

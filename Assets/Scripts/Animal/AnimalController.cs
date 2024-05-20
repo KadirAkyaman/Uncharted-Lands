@@ -43,13 +43,13 @@ public class AnimalController : MonoBehaviour
         switch (currentState)
         {
             case AnimalState.Idle:
-                animator.SetBool("isWalk", false);
+                animator.SetBool("isRunning", false);
                 HandleIdleState();
 
                 break;
 
             case AnimalState.Wander:
-                animator.SetBool("isWalk", true);
+                animator.SetBool("isRunning", true);
                 HandleMovingState();
                 break;
         }
@@ -138,10 +138,10 @@ public class AnimalController : MonoBehaviour
 
 public enum AnimalState
 {
-    Idle, // Hayvanýn hareketsiz olduðu durum
-    Wander, // Hayvanýn hareket ettiði durum
-    Eating, // Hayvanýn yemek yediði durum
-    Running, // Tehlike durumunda kaçtýðý durum
-    Attacking, // Saldýrý durumunda olduðu durum
-    Resting // Hayvanýn dinlendiði durum
+    Idle, // Hayvanï¿½n hareketsiz olduï¿½u durum
+    Wander, // Hayvanï¿½n hareket ettiï¿½i durum
+    Eating, // Hayvanï¿½n yemek yediï¿½i durum
+    Running, // Tehlike durumunda kaï¿½tï¿½ï¿½ï¿½ durum
+    Attacking, // Saldï¿½rï¿½ durumunda olduï¿½u durum
+    Resting // Hayvanï¿½n dinlendiï¿½i durum
 }

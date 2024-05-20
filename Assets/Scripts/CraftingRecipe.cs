@@ -14,11 +14,16 @@ public class CraftingRecipe
 
     public int numOfReqs;
 
-    public CraftingRecipe(string name, int reqNum, string R1, int r1Num, string R2, int r2Num)
+    public int numOfItemsToProduce;//olusturulacak esya sayisi
+    
+
+    public CraftingRecipe(string name,int producedItems , int reqNum, string R1, int r1Num, string R2, int r2Num)
     {
         ItemName = name;
 
         numOfReqs = reqNum;//kac adet degiskene ihtiyacimiz var
+
+        numOfItemsToProduce = producedItems;
 
         Req1 = R1;
         Req2 = R2;

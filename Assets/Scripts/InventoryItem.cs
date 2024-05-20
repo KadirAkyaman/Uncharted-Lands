@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -32,6 +33,8 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
     public bool isInsideQuickSlot;//quick slotlardaki item
 
     public bool isSelected;//secili item
+
+    public bool isUsable;
 
 
     private void Start()
@@ -83,9 +86,13 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 EquipSystem.Instance.AddToQuickSlots(gameObject);
                 isInsideQuickSlot = true;
             }
+
+            if (isUsable)
+            {
+                gameObject.SetActive(false);
+                UseItem();
+            }
         }
-
-
     }
 
     public void OnPointerUp(PointerEventData eventData)
@@ -99,6 +106,64 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                 CraftingSystem.Instance.RefreshInventory();
             }
         }
+    }
+
+    private void UseItem()
+    {
+        itemInfoUI.SetActive(false);
+
+        InventorySystem.Instance.isOpen = false;
+        InventorySystem.Instance.inventoryScreenUI.SetActive(false);
+
+        CraftingSystem.Instance.isOpen = false;
+        CraftingSystem.Instance.craftingScreenUI.SetActive(false);    
+        CraftingSystem.Instance.toolsScreenUI.SetActive(false);  
+        CraftingSystem.Instance.survivalScreenUI.SetActive(false);  
+        CraftingSystem.Instance.processScreenUI.SetActive(false);  
+        CraftingSystem.Instance.buildingScreenUI.SetActive(false);  
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        SelectionManager.Instance.EnableSelection();
+        SelectionManager.Instance.enabled = true;
+
+        switch (gameObject.name)
+        {
+            case "Foundation(Clone)": 
+                    ConstructionManager.Instance.itemToBeDestroyed = gameObject;
+                    ConstructionManager.Instance.ActivateConstructionPlacement("FoundationModel");
+                    break;
+                
+            case "Foundation": 
+                    ConstructionManager.Instance.itemToBeDestroyed = gameObject;
+                    ConstructionManager.Instance.ActivateConstructionPlacement("FoundationModel");
+                    break;
+
+            case "Wall(Clone)": 
+                    ConstructionManager.Instance.itemToBeDestroyed = gameObject;
+                    ConstructionManager.Instance.ActivateConstructionPlacement("WallModel");
+                    break; 
+            
+            case "Wall": 
+                    ConstructionManager.Instance.itemToBeDestroyed = gameObject;
+                    ConstructionManager.Instance.ActivateConstructionPlacement("WallModel");
+                    break;
+
+            case "Campfire(Clone)": 
+                    PlacementSystem.Instance.inventoryItemToDestory = gameObject;
+                    PlacementSystem.Instance.ActivatePlacementMode("CampfireModel");
+                    break; 
+                    
+            case "Campfire": 
+                    PlacementSystem.Instance.inventoryItemToDestory = gameObject;
+                    PlacementSystem.Instance.ActivatePlacementMode("CampfireModel");
+                    break; 
+
+            default:
+                    break;
+        }
+
     }
 
     private void consumingFunction(float healthEffect, float caloriesEffect)
