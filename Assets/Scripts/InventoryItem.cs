@@ -160,6 +160,16 @@ public class InventoryItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
                     PlacementSystem.Instance.ActivatePlacementMode("CampfireModel");
                     break; 
 
+            case "Bed(Clone)": 
+                    PlacementSystem.Instance.inventoryItemToDestory = gameObject;
+                    PlacementSystem.Instance.ActivatePlacementMode("BedModel");
+                    break; 
+                    
+            case "Bed": 
+                    PlacementSystem.Instance.inventoryItemToDestory = gameObject;
+                    PlacementSystem.Instance.ActivatePlacementMode("BedModel");
+                    break; 
+
             default:
                     break;
         }

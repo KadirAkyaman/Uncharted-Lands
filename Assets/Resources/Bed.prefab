@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3064303581585776751}
   - component: {fileID: -1686637193813043854}
   m_Layer: 5
-  m_Name: Campfire
+  m_Name: Bed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -69,7 +69,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -5082028054129534636, guid: d6a341a75286a744d97b5409554c1081, type: 3}
+  m_Sprite: {fileID: 1652167235122346752, guid: d6a341a75286a744d97b5409554c1081, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -116,9 +116,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   isTrashable: 1
-  thisName: Campfire
-  thisDescription: A combination of stone and stick.
-  thisFunctionality: Allows you to cook food.
+  thisName: Bed
+  thisDescription: Used for sleeping.
+  thisFunctionality: When you sleep, you wake up more energised
   isConsumable: 0
   healthEffect: 0
   caloriesEffect: 0

@@ -204,7 +204,6 @@ public class InventorySystem : MonoBehaviour
                 emptySlot++;
             }
         }
-        Debug.Log(emptySlot);
 
         if (emptySlot >= emptyNeeded)
         {

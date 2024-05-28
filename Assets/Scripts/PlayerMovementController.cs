@@ -7,6 +7,9 @@ public class PlayerMovementController : MonoBehaviour
     private CharacterController characterController;
 
     [SerializeField] private float movementSpeed;
+    private float maxMovementSpeed;
+    [SerializeField] private float runSpeed;
+    private float maxRunSpeed;
     private float gravity;
     public float walkingGravity = -50;
     [SerializeField] private float jumpHeight;
@@ -32,11 +35,13 @@ public class PlayerMovementController : MonoBehaviour
     {
         isSwimming = false;
         characterController = GetComponent<CharacterController>();
+        maxMovementSpeed = movementSpeed;
+        maxRunSpeed = runSpeed;
     }
 
     void Update()
     {
-        if (CampfireUIManager.Instance.isUIOpen == false)
+        if (CampfireUIManager.Instance.isUIOpen == false && !SleepSystem.Instance.isSleeping)
         {
             Movement();
         }
@@ -49,9 +54,12 @@ public class PlayerMovementController : MonoBehaviour
         {
             if (isUnderWater)
             {
-                
+                gravity = swimmingGravity;
             }
-            gravity = swimmingGravity;
+            else
+            {
+                velocity.y = 0;
+            }
         }
         else
         {
@@ -65,17 +73,39 @@ public class PlayerMovementController : MonoBehaviour
             velocity.y = -2f;
         }
 
+
+        //IS PLAYER HUNGRY CONTROL => IF HUNGRY => CANT MOVE FAST
+        if (PlayerState.Instance.isPlayerHungry)
+        {
+            movementSpeed = maxMovementSpeed/2;
+            runSpeed = movementSpeed;
+        }
+        else
+        {
+            movementSpeed = maxMovementSpeed;
+            runSpeed = maxRunSpeed;
+        }
+
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
         Vector3 move = transform.right * x + transform.forward * z;
 
-        characterController.Move(move * movementSpeed * Time.deltaTime);
+        if (Input.GetKey(KeyCode.LeftShift) && PlayerState.Instance.canRun)
+        {
+            characterController.Move(move * runSpeed * Time.deltaTime); // Koşma hızı
+        }
+        else
+        {
+            characterController.Move(move * movementSpeed * Time.deltaTime); // Normal yürüme hızı
+            
+        }
 
 
-        if (Input.GetButtonDown("Jump") && isGrounded)
+        if (Input.GetButtonDown("Jump") && isGrounded && PlayerState.Instance.canJump)
         {
             velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            PlayerState.Instance.currentEnergy -= PlayerState.Instance.jumpEnergyLoss;
         }
 
         velocity.y += gravity * Time.deltaTime;

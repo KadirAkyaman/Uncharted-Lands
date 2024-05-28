@@ -8,34 +8,36 @@ public class PlayerState : MonoBehaviour
     CharacterState currentState;
     public static PlayerState Instance { get; set; }
 
-
     [Header("HealthBar Variables")]
     public float currentHealth;
     public float maxHealth;
 
     [Header("FoodBar Variables")]
-    public float currentFullnes;//tokluk
+    public float currentFullnes; // tokluk
     public float maxFullnes;
 
-    public float fullnesDistanceTreshold;//tetikleyici mesafe
+    public float fullnesDistanceTreshold; // tetikleyici mesafe
     public float fullnesDecreaseAmount;
 
-
     float distanceTravelled = 0;
+
+    public bool isPlayerHungry;
     Vector3 lastPosition;
 
     public GameObject player;
 
     [Header("EnergyBar Variables")]
-    public float currentEnergy;//tokluk
+    public float currentEnergy; // tokluk
     public float maxEnergy;
 
     float minEnergy = 0f;
-    public float energyDecreaseAmount;
+    public float energyIncreaseAmount;
+    private float maxEnergyIncreaseAmount;
     public float jumpEnergyDecreaseAmount;
+    public float jumpEnergyLoss;
 
-    private float energyLoss;
-    private float jumpEnergyLoss;
+    public bool canJump;
+    public bool canRun;
 
     [Header("Oxygene Variables")]
     public float currentOxygenPercent;
@@ -45,7 +47,6 @@ public class PlayerState : MonoBehaviour
     private float decreaseInterval = 1f;
 
     public float outOfAirDamagePerSecond = 5f;
-
 
     private void Awake()
     {
@@ -58,60 +59,92 @@ public class PlayerState : MonoBehaviour
             Instance = this;
         }
     }
+
     void Start()
+    {
+        InitializePlayerState();
+        
+    }
+
+    void Update()
+    {
+        UpdateOxygen();
+        UpdateState();
+        UpdateHunger();
+        UpdateDistanceTravelled();
+        UpdateEnergy();
+        UpdateJumpAndRun();
+        LimitEnergyIncreaseSpeedWhenHungry();
+
+        if (Input.GetKeyDown(KeyCode.H))
+        {
+            currentFullnes -= 10;
+        }
+    }
+
+
+    private void InitializePlayerState()
     {
         currentHealth = maxHealth;
         currentFullnes = maxFullnes;
         currentEnergy = maxEnergy;
         currentOxygenPercent = maxOxygenPercent;
-
-        energyLoss = energyDecreaseAmount * Time.deltaTime;
+        canJump = true;
+        canRun = true;
+        isPlayerHungry = false;
+        maxEnergyIncreaseAmount = energyIncreaseAmount;
         jumpEnergyLoss = jumpEnergyDecreaseAmount * Time.deltaTime;
     }
 
-
-    void Update()
+        private void LimitEnergyIncreaseSpeedWhenHungry()
     {
-        if(player.GetComponent<PlayerMovementController>().isUnderWater)
+        if(currentFullnes < maxFullnes/2)
+        {
+            energyIncreaseAmount = maxEnergyIncreaseAmount/2;
+        }
+        else
+        {
+            energyIncreaseAmount = maxEnergyIncreaseAmount;
+        }
+    }
+
+    private void UpdateOxygen()
+    {
+        if (player.GetComponent<PlayerMovementController>().isUnderWater)
         {
             oxygenTimer += Time.deltaTime;
 
             if (oxygenTimer >= decreaseInterval)
             {
                 DecreaseOxygen();
-                oxygenTimer = 0;
+                oxygenTimer = 0f;
             }
         }
+    }
 
-
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            currentHealth -=10;
-            currentFullnes -=10;
-        }
-
+    private void UpdateState()
+    {
         if (Input.GetKeyDown(KeyCode.Space))
         {
             currentState = CharacterState.Jump;
         }
         else if (Input.GetKey(KeyCode.W))
         {
-            if (Input.GetKey(KeyCode.LeftShift))
-            {
-                currentState = CharacterState.Run;
-            }
-            else
-            {
-                currentState = CharacterState.Walk;
-            }
+            currentState = Input.GetKey(KeyCode.LeftShift) ? CharacterState.Run : CharacterState.Walk;
         }
         else
         {
             currentState = CharacterState.Idle;
         }
+    }
 
+    private void UpdateHunger()
+    {
+        isPlayerHungry = currentFullnes < 20;
+    }
 
-
+    private void UpdateDistanceTravelled()
+    {
         distanceTravelled += Vector3.Distance(player.transform.position, lastPosition);
         lastPosition = player.transform.position;
 
@@ -120,38 +153,40 @@ public class PlayerState : MonoBehaviour
             distanceTravelled = 0;
             currentFullnes -= fullnesDecreaseAmount;
         }
+    }
 
-
-
+    private void UpdateEnergy()
+    {
         if (currentState == CharacterState.Run)
         {
-            currentEnergy -= energyLoss;
-        }
-        else if (currentState == CharacterState.Jump)
-        {
-            currentEnergy -= jumpEnergyLoss;
-        }
-        
-        if (currentEnergy < maxEnergy)
-        {
-            currentEnergy = Mathf.Min(currentEnergy + energyLoss, maxEnergy);
+            currentEnergy -= energyIncreaseAmount * 1.4f;
         }
 
-        if(currentEnergy<minEnergy)             //SET MINIMUM ENERGY
+        if (currentEnergy < maxEnergy && !isPlayerHungry)
+        {
+            currentEnergy = Mathf.Min(currentEnergy + energyIncreaseAmount, maxEnergy);
+        }
+
+        if (currentEnergy < minEnergy)
         {
             currentEnergy = minEnergy;
         }
-
     }
 
-    private void DecreaseOxygen()                                          //DECREASE HEALTH
+    private void UpdateJumpAndRun()
+    {
+        canJump = currentEnergy >= jumpEnergyLoss;
+        canRun = currentEnergy > maxEnergy / 8;
+    }
+
+    private void DecreaseOxygen()
     {
         currentOxygenPercent -= oxygenDecreasedPerSecond;
 
         if (currentOxygenPercent < 0)
         {
             currentOxygenPercent = 0;
-            setHealth(currentHealth - outOfAirDamagePerSecond); 
+            setHealth(currentHealth - outOfAirDamagePerSecond);
         }
     }
 

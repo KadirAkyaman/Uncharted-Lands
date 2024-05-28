@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2062809946574139572
+--- !u!1 &6397220121940038946
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,26 +8,26 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7093318252402140574}
-  - component: {fileID: 6252662349485495852}
-  - component: {fileID: 6360587351032537344}
-  - component: {fileID: 5087337711406529560}
-  - component: {fileID: 3064303581585776751}
-  - component: {fileID: -1686637193813043854}
+  - component: {fileID: 8473988208992594305}
+  - component: {fileID: 2495706829092432382}
+  - component: {fileID: 8544882093768871799}
+  - component: {fileID: -1258738292300602755}
+  - component: {fileID: 1874791085154602953}
+  - component: {fileID: 5865089402285485212}
   m_Layer: 5
-  m_Name: Campfire
+  m_Name: Wool
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &7093318252402140574
+--- !u!224 &8473988208992594305
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2062809946574139572}
+  m_GameObject: {fileID: 6397220121940038946}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
@@ -41,21 +41,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 50, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &6252662349485495852
+--- !u!222 &2495706829092432382
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2062809946574139572}
+  m_GameObject: {fileID: 6397220121940038946}
   m_CullTransparentMesh: 1
---- !u!114 &6360587351032537344
+--- !u!114 &8544882093768871799
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2062809946574139572}
+  m_GameObject: {fileID: 6397220121940038946}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
@@ -69,7 +69,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: -5082028054129534636, guid: d6a341a75286a744d97b5409554c1081, type: 3}
+  m_Sprite: {fileID: -3295724435993730619, guid: d6a341a75286a744d97b5409554c1081, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -79,50 +79,50 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!114 &5087337711406529560
+--- !u!114 &-1258738292300602755
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2062809946574139572}
+  m_GameObject: {fileID: 6397220121940038946}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ef1dd3ee3c98b7e4397b95f9766dcb5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!225 &3064303581585776751
+--- !u!225 &1874791085154602953
 CanvasGroup:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2062809946574139572}
+  m_GameObject: {fileID: 6397220121940038946}
   m_Enabled: 1
   m_Alpha: 1
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
---- !u!114 &-1686637193813043854
+--- !u!114 &5865089402285485212
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2062809946574139572}
+  m_GameObject: {fileID: 6397220121940038946}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: f14c023aab94f0b459a44daebaad2452, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   isTrashable: 1
-  thisName: Campfire
-  thisDescription: A combination of stone and stick.
-  thisFunctionality: Allows you to cook food.
+  thisName: Wool
+  thisDescription: Made from sheep, keeps you warm.
+  thisFunctionality: Used for making clothes and bedding.
   isConsumable: 0
   healthEffect: 0
   caloriesEffect: 0
   isEquippable: 0
   isInsideQuickSlot: 0
   isSelected: 0
-  isUsable: 1
+  isUsable: 0

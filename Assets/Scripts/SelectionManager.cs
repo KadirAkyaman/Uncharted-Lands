@@ -89,6 +89,22 @@ public class SelectionManager : MonoBehaviour
                 handIsVisible = true;
             }
 
+            BedController bed = selectionTransform.GetComponent<BedController>();
+
+            if (bed && bed.playerInRange)
+            {
+                onTarget = true;
+                SelectedObject = bed.gameObject;
+                interaction_text.text = bed.GetItemName();
+                interaction_Info_UI.SetActive(true);
+
+                CenterDotImage.gameObject.SetActive(false);
+                handIcon.gameObject.SetActive(true);
+
+                handIsVisible = true;
+            }
+
+
             Campfire campfire = selectionTransform.GetComponent<Campfire>();
 
             if (campfire && campfire.playerInRange && PlacementSystem.Instance.inPlacementMode == false)
@@ -150,7 +166,7 @@ public class SelectionManager : MonoBehaviour
 
             }
 
-            if (!interactable && !animal)
+            if (!interactable && !animal && !bed)
             {
                 onTarget=false;
                 handIsVisible = false;
@@ -159,7 +175,7 @@ public class SelectionManager : MonoBehaviour
                 handIcon.gameObject.SetActive(false);
             }
 
-            if (!interactable && !animal && !choppableTree && !campfire)
+            if (!interactable && !animal && !choppableTree && !campfire && !bed)
             {
                 interaction_text.text = "";
                 interaction_Info_UI.gameObject.SetActive(false);

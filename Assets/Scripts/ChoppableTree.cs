@@ -48,7 +48,7 @@ public class ChoppableTree : MonoBehaviour
         animator.SetTrigger("shake");
         treeHealth -= 1;
 
-        PlayerState.Instance.currentEnergy -= energySpentChoppingWood;
+        PlayerState.Instance.currentEnergy -= energySpentChoppingWood*1.2f;
         if (treeHealth<=0)
         {
             TreeWasCutDown();

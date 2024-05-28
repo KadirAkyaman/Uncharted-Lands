@@ -52,8 +52,8 @@ public class PlacebleItem : MonoBehaviour
             if (Physics.Raycast(transform.position, Vector3.down, out hit, Mathf.Infinity, LayerMask.GetMask("Ground")))
             {
                 // Align the box's rotation with the ground normal
-                Quaternion newRotation = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
-                transform.rotation = newRotation;
+                //Quaternion newRotation = Quaternion.FromToRotation(transform.up, hit.normal) * transform.rotation;
+                //transform.rotation = newRotation;
               
                 isGrounded = true;
             }

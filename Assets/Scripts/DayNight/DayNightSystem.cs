@@ -10,7 +10,7 @@ public class DayNightSystem : MonoBehaviour
 
     public float dayDurationInSeconds = 24.0f;
     public int currentHour;
-    float currentTimeOfDay = 0.35f; // = sabah 8
+    public float currentTimeOfDay = 0.35f; // = sabah 8
 
     bool lockNextDayTrigger = false;
 

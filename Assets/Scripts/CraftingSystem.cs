@@ -15,10 +15,10 @@ public class CraftingSystem : MonoBehaviour
     private Button toolsButton, survivalButton, processButton, buildingButton;
 
     //Craft
-    private Button craftAxeButton, craftPlankButton, craftFoundationButton, craftWallButton;
+    private Button craftAxeButton, craftPlankButton, craftFoundationButton, craftWallButton, craftCampfireButton, craftBedButton;
 
     //Req
-    Text axeReq1, axeReq2, plankReq1, foundationReq1, wallReq1;
+    Text axeReq1, axeReq2, plankReq1, foundationReq1, wallReq1, campfireReq1, campfireReq2, bedReq1, bedReq2;
 
     public bool isOpen;
 
@@ -29,6 +29,9 @@ public class CraftingSystem : MonoBehaviour
     public CraftingRecipe FoundationRecipe = new CraftingRecipe("Foundation",1 , 1, "Plank", 4, "", 0);
 
     public CraftingRecipe WallRecipe = new CraftingRecipe("Wall",1 , 1, "Plank", 2, "", 0);
+
+    public CraftingRecipe CampfireRecipe = new CraftingRecipe("Campfire", 1, 2, "Stone", 4, "Stick", 4);
+    public CraftingRecipe BedRecipe = new CraftingRecipe("Bed", 1, 2, "Plank", 2, "Wool", 2);
 
     public static CraftingSystem Instance { get; set; }
 
@@ -85,6 +88,20 @@ public class CraftingSystem : MonoBehaviour
 
         craftWallButton = buildingScreenUI.transform.Find("Wall").transform.Find("Button").GetComponent<Button>();
         craftWallButton.onClick.AddListener(delegate { CraftItem(WallRecipe); });
+
+        //CAMPFIRE REQ
+        campfireReq1 = survivalScreenUI.transform.Find("Campfire").transform.Find("req1").GetComponent<Text>();
+        campfireReq2 = survivalScreenUI.transform.Find("Campfire").transform.Find("req2").GetComponent<Text>();
+
+        craftCampfireButton = survivalScreenUI.transform.Find("Campfire").transform.Find("Button").GetComponent<Button>();
+        craftCampfireButton.onClick.AddListener(delegate { CraftItem(CampfireRecipe); });
+
+        //BED REQ
+        bedReq1 = survivalScreenUI.transform.Find("Bed").transform.Find("req1").GetComponent<Text>();
+        bedReq2 = survivalScreenUI.transform.Find("Bed").transform.Find("req2").GetComponent<Text>();
+
+        craftBedButton = survivalScreenUI.transform.Find("Bed").transform.Find("Button").GetComponent<Button>();
+        craftBedButton.onClick.AddListener(delegate { CraftItem(BedRecipe); });
     }
 
     private void CraftItem(CraftingRecipe recipeToCraft)//ESYALARI CRAFT ETME BOLUMU
@@ -185,6 +202,7 @@ public class CraftingSystem : MonoBehaviour
         int stickCount = 0;
         int logCount = 0;
         int plankCount = 0;
+        int woolCount = 0;
 
         InventoryItemList = InventorySystem.Instance.ItemList;
 
@@ -206,6 +224,10 @@ public class CraftingSystem : MonoBehaviour
 
                 case "Plank":
                     plankCount +=1;
+                    break; 
+
+                case "Wool":
+                    woolCount +=1;
                     break; 
             }
         }
@@ -236,7 +258,7 @@ public class CraftingSystem : MonoBehaviour
         }
 
         //FOUNDATION
-        foundationReq1.text = "4 Plank [" + logCount + "]";
+        foundationReq1.text = "4 Plank [" + plankCount + "]";
 
         if (plankCount >= 4 && InventorySystem.Instance.CheckSlotsAvailable(1))
         {
@@ -248,7 +270,7 @@ public class CraftingSystem : MonoBehaviour
         }
 
         //WALL
-        wallReq1.text = "2 Plank [" + logCount + "]";
+        wallReq1.text = "2 Plank [" + plankCount + "]";
 
         if (plankCount >= 2 && InventorySystem.Instance.CheckSlotsAvailable(1))
         {
@@ -257,6 +279,32 @@ public class CraftingSystem : MonoBehaviour
         else
         {
             craftWallButton.gameObject.SetActive(false);
+        }
+
+        //CAMPFIRE
+        campfireReq1.text = "4 Stone [" + stoneCount + "]";
+        campfireReq2.text = "4 Stick [" + stickCount + "]";
+
+        if (stoneCount >= 4 && stickCount >= 4 && InventorySystem.Instance.CheckSlotsAvailable(1))
+        {
+            craftCampfireButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            craftCampfireButton.gameObject.SetActive(false);
+        }
+
+        //BED
+        bedReq1.text = "2 Plank [" + plankCount + "]";
+        bedReq2.text = "2 Wool [" + woolCount + "]";
+
+        if (plankCount >= 2 && woolCount >= 2 && InventorySystem.Instance.CheckSlotsAvailable(1))
+        {
+            craftBedButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            craftBedButton.gameObject.SetActive(false);
         }
     }
 
