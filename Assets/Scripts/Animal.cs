@@ -29,27 +29,35 @@ public class Animal : MonoBehaviour
     }
 
     [SerializeField] AnimalType thisAnimalType;
+    public AnimalController animalController;
 
 
-    private void Start() 
+    private void Start()
     {
         currentHealth = maxHealth;
+        animalController = gameObject.GetComponent<AnimalController>();
     }
 
     public void TakeDamage(int damage)
     {
         if (!isDead)
         {
-            currentHealth -=damage;
+            currentHealth -= damage;
             bloodParticle.Play();
 
-            if (currentHealth<=0)
+            animalController.isAnimalRunning = true;
+            animalController.isDamaged = true;
+            animalController.HandleRunningState();
+
+            if (currentHealth <= 0)
             {
                 PlayDyingSound();
                 animator.SetTrigger("DIE");
                 GetComponent<AnimalController>().enabled = false;
 
                 isDead = true;
+                animalController.isAnimalDead = true;
+                animalController.HandleDeadState();
             }
             else
             {
@@ -66,7 +74,7 @@ public class Animal : MonoBehaviour
             case AnimalType.Sheep:
                 soundChannel.PlayOneShot(sheepDie);
                 break;
-            default :
+            default:
                 break;
         }
 
@@ -79,7 +87,7 @@ public class Animal : MonoBehaviour
             case AnimalType.Sheep:
                 soundChannel.PlayOneShot(sheepHit);
                 break;
-            default :
+            default:
                 break;
         }
     }

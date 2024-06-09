@@ -15,10 +15,10 @@ public class CraftingSystem : MonoBehaviour
     private Button toolsButton, survivalButton, processButton, buildingButton;
 
     //Craft
-    private Button craftAxeButton, craftPlankButton, craftFoundationButton, craftWallButton, craftCampfireButton, craftBedButton;
+    private Button craftAxeButton, craftPlankButton, craftFoundationButton, craftWallButton, craftCampfireButton, craftBedButton, craftTorchButton;
 
     //Req
-    Text axeReq1, axeReq2, plankReq1, foundationReq1, wallReq1, campfireReq1, campfireReq2, bedReq1, bedReq2;
+    Text axeReq1, axeReq2, plankReq1, foundationReq1, wallReq1, campfireReq1, campfireReq2, bedReq1, bedReq2, torchReq1, torchReq2;
 
     public bool isOpen;
 
@@ -32,6 +32,7 @@ public class CraftingSystem : MonoBehaviour
 
     public CraftingRecipe CampfireRecipe = new CraftingRecipe("Campfire", 1, 2, "Stone", 4, "Stick", 4);
     public CraftingRecipe BedRecipe = new CraftingRecipe("Bed", 1, 2, "Plank", 2, "Wool", 2);
+    public CraftingRecipe TorchRecipe = new CraftingRecipe("Torch", 1, 2, "Flint", 1, "Stick", 1);
 
     public static CraftingSystem Instance { get; set; }
 
@@ -102,6 +103,13 @@ public class CraftingSystem : MonoBehaviour
 
         craftBedButton = survivalScreenUI.transform.Find("Bed").transform.Find("Button").GetComponent<Button>();
         craftBedButton.onClick.AddListener(delegate { CraftItem(BedRecipe); });
+
+        //TORCH REQ
+        torchReq1 = survivalScreenUI.transform.Find("Torch").transform.Find("req1").GetComponent<Text>();
+        torchReq2 = survivalScreenUI.transform.Find("Torch").transform.Find("req2").GetComponent<Text>();
+
+        craftTorchButton = survivalScreenUI.transform.Find("Torch").transform.Find("Button").GetComponent<Button>();
+        craftTorchButton.onClick.AddListener(delegate { CraftItem(TorchRecipe); });
     }
 
     private void CraftItem(CraftingRecipe recipeToCraft)//ESYALARI CRAFT ETME BOLUMU
@@ -203,6 +211,7 @@ public class CraftingSystem : MonoBehaviour
         int logCount = 0;
         int plankCount = 0;
         int woolCount = 0;
+        int flintCount = 0;
 
         InventoryItemList = InventorySystem.Instance.ItemList;
 
@@ -229,6 +238,10 @@ public class CraftingSystem : MonoBehaviour
                 case "Wool":
                     woolCount +=1;
                     break; 
+
+                case "Flint":
+                    flintCount +=1;
+                    break;
             }
         }
 
@@ -305,6 +318,19 @@ public class CraftingSystem : MonoBehaviour
         else
         {
             craftBedButton.gameObject.SetActive(false);
+        }
+
+        //TORCH
+        bedReq1.text = "1 Flint [" + flintCount + "]";
+        bedReq2.text = "1 Stick [" + stickCount + "]";
+
+        if (flintCount >= 1 && stickCount >= 1 && InventorySystem.Instance.CheckSlotsAvailable(1))
+        {
+            craftTorchButton.gameObject.SetActive(true);
+        }
+        else
+        {
+            craftTorchButton.gameObject.SetActive(false);
         }
     }
 

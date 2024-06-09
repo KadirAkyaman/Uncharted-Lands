@@ -19,22 +19,37 @@ public class DayNightSystem : MonoBehaviour
     float blendedValue = 0.0f;
 
     public TextMeshProUGUI timeUI;
-    
+
+    public WeatherSystem weatherSystem;
+
     void Update()
     {
         currentTimeOfDay += Time.deltaTime / dayDurationInSeconds;
         currentTimeOfDay %= 1;
 
 
-        currentHour = Mathf.FloorToInt(currentTimeOfDay*24);
+        currentHour = Mathf.FloorToInt(currentTimeOfDay * 24);
 
         timeUI.text = $"{currentHour}:00";
 
         //isigin rotasyonunu guncelleme
-        directionalLight.transform.rotation = Quaternion.Euler(new Vector3((currentTimeOfDay*360)- 90, 170, 0));
+        directionalLight.transform.rotation = Quaternion.Euler(new Vector3((currentTimeOfDay * 360) - 90, 170, 0));
 
-        //skybox materyalini guncelleme
-        UpdateSkybox();
+
+        if (weatherSystem.isSpecialWeather == false)
+        {
+            UpdateSkybox();
+        }
+
+        if (currentHour == 0 && lockNextDayTrigger == false)
+        {
+            TimeManager.Instance.TriggerNextDay();
+            lockNextDayTrigger = true;
+        }
+        if (currentHour != 0)
+        {
+            lockNextDayTrigger = false;
+        }
     }
 
     private void UpdateSkybox()
@@ -42,7 +57,7 @@ public class DayNightSystem : MonoBehaviour
         Material currentSkybox = null;
         foreach (SkyboxTimeMapping mapping in timeMapping)
         {
-            if(currentHour == mapping.hour)
+            if (currentHour == mapping.hour)
             {
                 currentSkybox = mapping.skyboxMaterial;
 
@@ -66,18 +81,8 @@ public class DayNightSystem : MonoBehaviour
                 break;
             }
         }
-        if (currentHour == 0 && lockNextDayTrigger == false)
-        {
-            TimeManager.Instance.TriggerNextDay();
-            lockNextDayTrigger = true;
-        }
-        if (currentHour!=0)
-        {
-            lockNextDayTrigger = false;
-        }
 
-
-        if (currentSkybox!=null)
+        if (currentSkybox != null)
         {
             RenderSettings.skybox = currentSkybox;
         }

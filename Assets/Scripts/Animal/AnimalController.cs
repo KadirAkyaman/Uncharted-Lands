@@ -1,6 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.Animations;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -16,17 +14,27 @@ public class AnimalController : MonoBehaviour
     public float idleTime;
 
     protected NavMeshAgent navMeshAgent;
-    protected AnimalState currentState = AnimalState.Idle;
+    public AnimalState currentState = AnimalState.Idle;
 
-    //ANIMATION
+    // ANİMASYON
     public Animator animator;
 
+    public bool isAnimalDead;
+    public bool isAnimalRunning;
+
+    public bool isDamaged;
+
+    public bool playerInDangerArea;
+
+    private int runCounter;
 
     private void Start()
     {
         InitialiseAnimal();
-
-
+        isAnimalDead = false;
+        isAnimalRunning = false;
+        playerInDangerArea = false;
+        isDamaged = false;
     }
 
     protected virtual void InitialiseAnimal()
@@ -44,15 +52,92 @@ public class AnimalController : MonoBehaviour
         {
             case AnimalState.Idle:
                 animator.SetBool("isRunning", false);
-                HandleIdleState();
-
+                if (!isAnimalDead && !isAnimalRunning)
+                    StartCoroutine(WaitToMove());
                 break;
 
             case AnimalState.Wander:
                 animator.SetBool("isRunning", true);
-                HandleMovingState();
+                if (!isAnimalDead && !isAnimalRunning)
+                    StartCoroutine(WaitToReachDestination());
+                break;
+
+            case AnimalState.Running:
+                animator.SetBool("isRunning", true);
+                if (isAnimalRunning)
+                    StartCoroutine(AnimalRunning());
                 break;
         }
+    }
+
+    public void HandleDeadState()
+    {
+        navMeshAgent.isStopped = true;
+        currentState = AnimalState.Dead;
+    }
+
+    public void HandleRunningState()
+    {
+        currentState = AnimalState.Running;
+        StartCoroutine(AnimalRunning());
+    }
+
+    IEnumerator AnimalRunning()
+    {
+        while (playerInDangerArea && isAnimalRunning)
+        {
+            Vector3 playerPosition = FindPlayerPosition();
+            if (playerPosition != Vector3.zero)
+            {
+                Vector3 fleeDirection = transform.position - playerPosition;
+                Vector3 targetPosition = transform.position + fleeDirection;
+
+                if (NavMesh.SamplePosition(targetPosition, out NavMeshHit hit, 10f, NavMesh.AllAreas))
+                {
+                    navMeshAgent.SetDestination(hit.position);
+                }
+            }
+            runCounter++;
+
+            if (runCounter >= 30)
+                isAnimalRunning = false;
+
+            yield return new WaitForSeconds(0.2f);
+        }
+        isDamaged = false;
+        playerInDangerArea = false;
+
+        currentState = AnimalState.Wander;
+        UpdateState();
+    }
+
+    private void Update()
+    {
+        if (isAnimalRunning || currentState == AnimalState.Running)
+        {
+            animator.SetBool("isRunning", true);
+        }
+    }
+
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            playerInDangerArea = true;
+        }
+
+        if (other.CompareTag("Player") && !isAnimalDead && isDamaged)
+        {
+            isAnimalRunning = true;
+            playerInDangerArea = true;
+            runCounter = 0;
+        }
+    }
+
+    private Vector3 FindPlayerPosition()
+    {
+        GameObject player = GameObject.FindGameObjectWithTag("Player");
+        return player != null ? player.transform.position : Vector3.zero;
     }
 
     protected Vector3 GetRandomNavMeshPosition(Vector3 origin, float distance)
@@ -72,29 +157,17 @@ public class AnimalController : MonoBehaviour
         return origin;
     }
 
-
     #region HandleState
-
-    protected virtual void HandleIdleState()
-    {
-        StartCoroutine(WaitToMove());
-    }
 
     private IEnumerator WaitToMove()
     {
         float waitTime = Random.Range(idleTime / 2, idleTime * 2);
-
         yield return new WaitForSeconds(waitTime);
 
         Vector3 randomDestination = GetRandomNavMeshPosition(transform.position, wanderDistance);
-
         navMeshAgent.SetDestination(randomDestination);
-        SetState(AnimalState.Wander);
-    }
-
-    protected virtual void HandleMovingState()
-    {
-        StartCoroutine(WaitToReachDestination());
+        currentState = AnimalState.Wander;
+        UpdateState();
     }
 
     private IEnumerator WaitToReachDestination()
@@ -106,42 +179,28 @@ public class AnimalController : MonoBehaviour
             if (Time.time - startTime >= maxWalkTime)
             {
                 navMeshAgent.ResetPath();
-                SetState(AnimalState.Idle);
+                currentState = AnimalState.Idle;
+                UpdateState();
                 yield break;
             }
-
-            //CheckChaseConditions();
 
             yield return null;
         }
 
-        // Destination has been reached
-        SetState(AnimalState.Idle);
+        currentState = AnimalState.Idle;
+        UpdateState();
     }
 
     #endregion
-
-    protected void SetState(AnimalState newState)
-    {
-        if (currentState == newState)
-            return;
-
-        currentState = newState;
-        OnStateChanged(newState);
-    }
-
-    protected virtual void OnStateChanged(AnimalState newState)
-    {
-        UpdateState();
-    }
 }
 
 public enum AnimalState
 {
-    Idle, // Hayvan�n hareketsiz oldu�u durum
-    Wander, // Hayvan�n hareket etti�i durum
-    Eating, // Hayvan�n yemek yedi�i durum
-    Running, // Tehlike durumunda ka�t��� durum
-    Attacking, // Sald�r� durumunda oldu�u durum
-    Resting // Hayvan�n dinlendi�i durum
+    Idle, // Hayvanın hareketsiz olduğu durum
+    Wander, // Hayvanın hareket ettiği durum
+    Eating, // Hayvanın yemek yediği durum
+    Running, // Tehlike durumunda kaçtığı durum
+    Attacking, // Saldırı durumunda olduğu durum
+    Resting, // Hayvanın dinlendiği durum
+    Dead // Hayvanın öldüğü durum
 }

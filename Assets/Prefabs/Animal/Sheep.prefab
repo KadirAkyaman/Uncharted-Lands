@@ -6261,7 +6261,7 @@ Transform:
   - {fileID: 7700542482715002567}
   - {fileID: 100712264042893338}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &7846958100907382704
 BoxCollider:
@@ -6303,7 +6303,7 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 10, y: 3, z: 10}
+  m_Size: {x: 10, y: 9.13, z: 10}
   m_Center: {x: 0, y: 0, z: 0.25}
 --- !u!114 &2937833293513408402
 MonoBehaviour:
@@ -6320,7 +6320,7 @@ MonoBehaviour:
   animalName: Sheep
   playerInRange: 0
   currentHealth: 0
-  maxHealth: 40
+  maxHealth: 80
   soundChannel: {fileID: 3417939153553047337}
   sheepHit: {fileID: 8300000, guid: 06ef16bbb22d20946b1575f511cfd81b, type: 3}
   sheepDie: {fileID: 8300000, guid: d9134a166136b0e47b1dac0d8913ec49, type: 3}
@@ -6328,6 +6328,7 @@ MonoBehaviour:
   bloodParticle: {fileID: 5381508826579514201}
   isDead: 0
   thisAnimalType: 0
+  animalController: {fileID: 0}
 --- !u!82 &3417939153553047337
 AudioSource:
   m_ObjectHideFlags: 0
@@ -6439,7 +6440,16 @@ MonoBehaviour:
   possibleLoot:
   - item: {fileID: 5379340186143711808, guid: bec1bd15e1f446546a2177fddf59e282, type: 3}
     amountMin: 1
-    amountMax: 2
+    amountMax: 1
+  - item: {fileID: 5379340186143711808, guid: e91f8dc7f1a768a459e7f6d84574cd4b, type: 3}
+    amountMin: 1
+    amountMax: 1
+  - item: {fileID: 5379340186143711808, guid: e91f8dc7f1a768a459e7f6d84574cd4b, type: 3}
+    amountMin: 1
+    amountMax: 1
+  - item: {fileID: 5379340186143711808, guid: bec1bd15e1f446546a2177fddf59e282, type: 3}
+    amountMin: 0
+    amountMax: 1
   finalLoot: []
   wasLootCalculated: 0
 --- !u!195 &5523529623753059614
@@ -6477,10 +6487,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wanderDistance: 20
-  walkSpeed: 5
+  walkSpeed: 8
   maxWalkTime: 5
   idleTime: 5
+  currentState: 0
   animator: {fileID: 7438331738296618121}
+  isAnimalDead: 0
+  isAnimalRunning: 0
+  isDamaged: 0
+  playerInDangerArea: 0
 --- !u!1 &8590513989523331857
 GameObject:
   m_ObjectHideFlags: 0
