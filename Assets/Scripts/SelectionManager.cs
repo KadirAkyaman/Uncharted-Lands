@@ -218,7 +218,20 @@ public class SelectionManager : MonoBehaviour
     IEnumerator DealDamageTo(Animal animal, float delay, int damage)
     {
         yield return new WaitForSeconds(delay);
-        animal.TakeDamage(damage);
+        switch (animal.animalType)
+        {
+            case Animal.AnimalType.Sheep : 
+                animal.TakeDamageSheep(damage);
+                break;
+
+            case Animal.AnimalType.Bear : 
+                animal.TakeDamageBear(damage);
+                break;
+
+
+            default:
+                break;
+        }
     }
 
     public void DisableSelection()

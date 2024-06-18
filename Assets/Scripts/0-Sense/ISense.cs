@@ -2,7 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class WolfFSM : MonoBehaviour
+public interface ISense 
 {
-
+    void InitializeSense();
+    void UpdateSense();
 }

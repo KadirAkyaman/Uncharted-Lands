@@ -5990,7 +5990,7 @@ Animator:
   m_GameObject: {fileID: 6421081007034416917}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 5ac89ef48704f554a96cae5d9336c47b, type: 2}
+  m_Controller: {fileID: 9100000, guid: 0e16dbef0e36d884bbca2b7b34689331, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -6234,11 +6234,14 @@ GameObject:
   - component: {fileID: 5668060262174501973}
   - component: {fileID: 7846958100907382704}
   - component: {fileID: 8088965884749746224}
-  - component: {fileID: 2937833293513408402}
-  - component: {fileID: 3417939153553047337}
-  - component: {fileID: 8298766516720353286}
+  - component: {fileID: 1950722958322726488}
   - component: {fileID: 5523529623753059614}
-  - component: {fileID: 8952040607091574101}
+  - component: {fileID: 3417939153553047337}
+  - component: {fileID: 2937833293513408402}
+  - component: {fileID: 8298766516720353286}
+  - component: {fileID: 3844427002849269384}
+  - component: {fileID: 2168431715665502260}
+  - component: {fileID: 1915373085472183312}
   m_Layer: 0
   m_Name: Sheep
   m_TagString: Untagged
@@ -6261,7 +6264,7 @@ Transform:
   - {fileID: 7700542482715002567}
   - {fileID: 100712264042893338}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &7846958100907382704
 BoxCollider:
@@ -6305,30 +6308,55 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 10, y: 9.13, z: 10}
   m_Center: {x: 0, y: 0, z: 0.25}
---- !u!114 &2937833293513408402
-MonoBehaviour:
+--- !u!54 &1950722958322726488
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8114761603742023902}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 126
+  m_CollisionDetection: 0
+--- !u!195 &5523529623753059614
+NavMeshAgent:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8114761603742023902}
   m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d32e09f8a42ec314fb7231eb2d797a3d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  animalName: Sheep
-  playerInRange: 0
-  currentHealth: 0
-  maxHealth: 80
-  soundChannel: {fileID: 3417939153553047337}
-  sheepHit: {fileID: 8300000, guid: 06ef16bbb22d20946b1575f511cfd81b, type: 3}
-  sheepDie: {fileID: 8300000, guid: d9134a166136b0e47b1dac0d8913ec49, type: 3}
-  animator: {fileID: 7438331738296618121}
-  bloodParticle: {fileID: 5381508826579514201}
-  isDead: 0
-  thisAnimalType: 0
-  animalController: {fileID: 0}
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 3.5
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 1
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!82 &3417939153553047337
 AudioSource:
   m_ObjectHideFlags: 0
@@ -6425,6 +6453,31 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &2937833293513408402
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8114761603742023902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d32e09f8a42ec314fb7231eb2d797a3d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animalName: Sheep
+  playerInRange: 0
+  currentHealth: 0
+  maxHealth: 80
+  soundChannel: {fileID: 3417939153553047337}
+  sheepHit: {fileID: 8300000, guid: 06ef16bbb22d20946b1575f511cfd81b, type: 3}
+  sheepDie: {fileID: 8300000, guid: d9134a166136b0e47b1dac0d8913ec49, type: 3}
+  animator: {fileID: 7438331738296618121}
+  bloodParticle: {fileID: 5381508826579514201}
+  animalType: 0
+  isDead: 0
+  sheepNPC: {fileID: 0}
+  bearNPC: {fileID: 0}
 --- !u!114 &8298766516720353286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6452,29 +6505,7 @@ MonoBehaviour:
     amountMax: 1
   finalLoot: []
   wasLootCalculated: 0
---- !u!195 &5523529623753059614
-NavMeshAgent:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8114761603742023902}
-  m_Enabled: 1
-  m_AgentTypeID: 0
-  m_Radius: 0.5
-  m_Speed: 3.5
-  m_Acceleration: 8
-  avoidancePriority: 50
-  m_AngularSpeed: 120
-  m_StoppingDistance: 0
-  m_AutoTraverseOffMeshLink: 1
-  m_AutoBraking: 1
-  m_AutoRepath: 1
-  m_Height: 2
-  m_BaseOffset: 1
-  m_WalkableMask: 4294967295
-  m_ObstacleAvoidanceType: 4
---- !u!114 &8952040607091574101
+--- !u!114 &3844427002849269384
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -6483,19 +6514,52 @@ MonoBehaviour:
   m_GameObject: {fileID: 8114761603742023902}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: acab52e32c3bb1c41b0346d161eed04e, type: 3}
+  m_Script: {fileID: 11500000, guid: cb16074b14e323d46838bf10c0122882, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  wanderDistance: 20
-  walkSpeed: 8
-  maxWalkTime: 5
-  idleTime: 5
-  currentState: 0
+  speed: 7
+  isAggressiveAnimal: 0
+  damage: 0
   animator: {fileID: 7438331738296618121}
-  isAnimalDead: 0
-  isAnimalRunning: 0
-  isDamaged: 0
+  animalRb: {fileID: 1950722958322726488}
+  idleTime: 5
+  wanderDistance: 30
+  maxWalkTime: 5
   playerInDangerArea: 0
+  runCounter: 0
+  isAnimalRunning: 0
+  isAnimalDead: 0
+  player: {fileID: 0}
+--- !u!114 &2168431715665502260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8114761603742023902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a39212b933374d64ca1000d498e0dafd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  fieldOfView: 60
+  maxCheckDistance: 40
+--- !u!114 &1915373085472183312
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8114761603742023902}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6084a769e3de25849ba4fae3229e626a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  player: {fileID: 0}
+  proximityDistance: 20
+  animator: {fileID: 7438331738296618121}
 --- !u!1 &8590513989523331857
 GameObject:
   m_ObjectHideFlags: 0

@@ -8,7 +8,7 @@ public class Animal : MonoBehaviour
 
     public bool playerInRange;
 
-    [SerializeField] int currentHealth;
+    public int currentHealth;
     [SerializeField] int maxHealth;
 
     [Header("Sounds")]
@@ -19,45 +19,82 @@ public class Animal : MonoBehaviour
     [SerializeField] Animator animator;
     [SerializeField] ParticleSystem bloodParticle;
 
+    public AnimalType animalType;
     public bool isDead;
-    enum AnimalType
+    public enum AnimalType
     {
         Sheep,
         Wolf,
         Bear,
         Rabbit
     }
-
-    [SerializeField] AnimalType thisAnimalType;
-    public AnimalController animalController;
+    public SheepNPC sheepNPC;
+    public BearNPC bearNPC;
 
 
     private void Start()
     {
         currentHealth = maxHealth;
-        animalController = gameObject.GetComponent<AnimalController>();
+        switch (animalType)
+        {
+            case AnimalType.Sheep:
+                sheepNPC = gameObject.GetComponent<SheepNPC>();
+                break;
+            case AnimalType.Bear:
+                bearNPC = gameObject.GetComponent<BearNPC>();
+                break;
+            default:
+                break;
+        }
+        
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamageSheep(int damage)
     {
         if (!isDead)
         {
+            GetComponentInChildren<Animator>().SetBool("isRunning",true);
             currentHealth -= damage;
             bloodParticle.Play();
 
-            animalController.isAnimalRunning = true;
-            animalController.isDamaged = true;
-            animalController.HandleRunningState();
+            sheepNPC.isAnimalRunning = true;
 
             if (currentHealth <= 0)
             {
                 PlayDyingSound();
                 animator.SetTrigger("DIE");
-                GetComponent<AnimalController>().enabled = false;
+                GetComponentInChildren<SheepNPC>().enabled = false;
 
                 isDead = true;
-                animalController.isAnimalDead = true;
-                animalController.HandleDeadState();
+                sheepNPC.isAnimalDead = true;
+                GetComponentInChildren<Animator>().SetTrigger("DIE");
+            }
+            else
+            {
+                PlayHitSound();
+            }
+        }
+    }
+
+    public void TakeDamageBear(int damage)
+    {
+        if (!isDead)
+        {
+            GetComponent<BearNPC>().SmoothRotateTowardsPlayer();
+            GetComponentInChildren<Animator>().SetBool("isRunning",true);
+            currentHealth -= damage;
+            bloodParticle.Play();
+
+            bearNPC.isAnimalRunning = true;
+
+            if (currentHealth <= 0)
+            {
+                PlayDyingSound();
+                animator.SetTrigger("DIE");
+                GetComponentInChildren<BearNPC>().enabled = false;
+
+                isDead = true;
+                GetComponentInChildren<Animator>().SetTrigger("DIE");
             }
             else
             {
@@ -69,7 +106,7 @@ public class Animal : MonoBehaviour
 
     private void PlayDyingSound()
     {
-        switch (thisAnimalType)
+        switch (animalType)
         {
             case AnimalType.Sheep:
                 soundChannel.PlayOneShot(sheepDie);
@@ -82,7 +119,7 @@ public class Animal : MonoBehaviour
 
     private void PlayHitSound()
     {
-        switch (thisAnimalType)
+        switch (animalType)
         {
             case AnimalType.Sheep:
                 soundChannel.PlayOneShot(sheepHit);
