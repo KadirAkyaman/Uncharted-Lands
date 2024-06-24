@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.Rendering;
+using UnityEngine.Rendering.PostProcessing;
 
 public class DayNightSystem : MonoBehaviour
 {
@@ -21,6 +23,13 @@ public class DayNightSystem : MonoBehaviour
     public TextMeshProUGUI timeUI;
 
     public WeatherSystem weatherSystem;
+
+    public Light light;
+
+    public VolumeProfile volumeProfileDay;
+    public VolumeProfile volumeProfileNight;
+
+    public Volume postProcessVolume;
 
     void Update()
     {
@@ -50,6 +59,17 @@ public class DayNightSystem : MonoBehaviour
         {
             lockNextDayTrigger = false;
         }
+
+        if (currentHour > 5 && currentHour < 21)
+        {
+            light.color = new Color(1.0f, 0.956f, 0.839f);
+            postProcessVolume.profile = volumeProfileDay;
+        }
+        else
+        {
+            light.color = Color.black;
+            postProcessVolume.profile = volumeProfileNight;
+        }
     }
 
     private void UpdateSkybox()
@@ -60,7 +80,6 @@ public class DayNightSystem : MonoBehaviour
             if (currentHour == mapping.hour)
             {
                 currentSkybox = mapping.skyboxMaterial;
-
                 if (currentSkybox.shader != null)
                 {
                     if (currentSkybox.shader.name == "Custom/SkyboxTransition")

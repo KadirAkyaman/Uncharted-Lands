@@ -321,8 +321,8 @@ public class CraftingSystem : MonoBehaviour
         }
 
         //TORCH
-        bedReq1.text = "1 Flint [" + flintCount + "]";
-        bedReq2.text = "1 Stick [" + stickCount + "]";
+        torchReq1.text = "1 Flint [" + flintCount + "]";
+        torchReq2.text = "1 Stick [" + stickCount + "]";
 
         if (flintCount >= 1 && stickCount >= 1 && InventorySystem.Instance.CheckSlotsAvailable(1))
         {

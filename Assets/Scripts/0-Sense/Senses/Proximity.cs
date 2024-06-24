@@ -39,7 +39,7 @@ public class Proximity : Sense
                 isInProximity = false;
             }
 
-            if (Vector3.Distance(transform.position, player.transform.position) < 8)
+            if (Vector3.Distance(transform.position, player.transform.position) <= 8)
             {
                 isInAttackRange = true;
                 GetComponentInChildren<Animator>().SetBool("isInAttackRange", true);

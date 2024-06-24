@@ -16,4 +16,5 @@ public class CookableFood
     public string name;
     public float timeToCook;
     public string cookedFoodName;
+    
 }

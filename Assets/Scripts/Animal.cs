@@ -13,8 +13,8 @@ public class Animal : MonoBehaviour
 
     [Header("Sounds")]
     [SerializeField] AudioSource soundChannel;
-    [SerializeField] AudioClip sheepHit;
-    [SerializeField] AudioClip sheepDie;
+    [SerializeField] AudioClip hit;
+    [SerializeField] AudioClip die;
 
     [SerializeField] Animator animator;
     [SerializeField] ParticleSystem bloodParticle;
@@ -31,9 +31,12 @@ public class Animal : MonoBehaviour
     public SheepNPC sheepNPC;
     public BearNPC bearNPC;
 
+    public AudioSource animalSound;
+
 
     private void Start()
     {
+        animalSound.pitch = Random.Range(1f, 2f);
         currentHealth = maxHealth;
         switch (animalType)
         {
@@ -51,10 +54,11 @@ public class Animal : MonoBehaviour
 
     public void TakeDamageSheep(int damage)
     {
-        if (!isDead)
+        if (!isDead && PlayerState.Instance.currentEnergy >=10 )
         {
             GetComponentInChildren<Animator>().SetBool("isRunning",true);
             currentHealth -= damage;
+            PlayerState.Instance.currentEnergy-=10;
             bloodParticle.Play();
 
             sheepNPC.isAnimalRunning = true;
@@ -78,13 +82,13 @@ public class Animal : MonoBehaviour
 
     public void TakeDamageBear(int damage)
     {
-        if (!isDead)
+        if (!isDead && PlayerState.Instance.currentEnergy >=10)
         {
             GetComponent<BearNPC>().SmoothRotateTowardsPlayer();
             GetComponentInChildren<Animator>().SetBool("isRunning",true);
             currentHealth -= damage;
             bloodParticle.Play();
-
+            PlayerState.Instance.currentEnergy-=10;
             bearNPC.isAnimalRunning = true;
 
             if (currentHealth <= 0)
@@ -106,26 +110,18 @@ public class Animal : MonoBehaviour
 
     private void PlayDyingSound()
     {
-        switch (animalType)
-        {
-            case AnimalType.Sheep:
-                soundChannel.PlayOneShot(sheepDie);
-                break;
-            default:
-                break;
-        }
+        soundChannel.PlayOneShot(die);
 
     }
 
     private void PlayHitSound()
     {
-        switch (animalType)
+        soundChannel.PlayOneShot(hit);
+
+        if (animalType == AnimalType.Sheep)
         {
-            case AnimalType.Sheep:
-                soundChannel.PlayOneShot(sheepHit);
-                break;
-            default:
-                break;
+        
+        animalSound.Play();
         }
     }
 

@@ -27,28 +27,24 @@ public class BearNPC : AggressiveAnimalNPC
 
     public GameObject playerState;
 
+    public Animator hitSystemAnimator;
+
     private void Start()
     {
         agent.speed = speed;
         animal = GetComponent<Animal>();
+        hitSystemAnimator = GameObject.Find("HitSystem").GetComponent<Animator>();
     }
 
     private void Update()
     {
         distance = Vector3.Distance(transform.position, player.transform.position);
-        if (distance < 15)
-        {
-            playerInDangerArea = true;
-        }
-        else
-        {
-            playerInDangerArea = false;
-        }
+        playerInDangerArea = distance < 15;
 
         animator.SetFloat("health", animal.currentHealth);
 
         // Smooth rotation towards player if within 8 units
-        if (distance <= 8 && animal.currentHealth>20)
+        if (distance <= 8 && animal.currentHealth > 20)
         {
             SmoothRotateTowardsPlayer();
         }
@@ -56,8 +52,14 @@ public class BearNPC : AggressiveAnimalNPC
 
     public override void Attack()
     {
+        SoundManager.Instance.PlaySound(SoundManager.Instance.bearAttackSound);
         if (distance <= 8)
+        {
             playerState.GetComponent<PlayerState>().currentHealth -= damage;
+            hitSystemAnimator.SetTrigger("isHit");
+
+            SoundManager.Instance.PlaySound(SoundManager.Instance.playerHitSound);
+        }
     }
 
     public override void Chase()
@@ -69,7 +71,8 @@ public class BearNPC : AggressiveAnimalNPC
     {
         animator.SetBool("isFollowingPlayer", true);
         isFollowingPlayer = true;
-        float stopDistance = 6.0f; // NPC'nin oyuncuya yaklaşacağı minimum mesafe
+        float stopDistance = 6.0f; // Minimum distance to approach the player
+        float keepDistance = 1.0f; // Distance to keep away from the player
 
         while (isFollowingPlayer)
         {
@@ -77,18 +80,24 @@ public class BearNPC : AggressiveAnimalNPC
 
             if (playerPosition != Vector3.zero)
             {
-                // NPC ve oyuncu arasındaki mesafeyi hesapla
+                // Calculate distance between NPC and player
                 float distanceToPlayer = Vector3.Distance(transform.position, playerPosition);
 
-                // Eğer mesafe belirlenen minimum mesafeden büyükse hedef pozisyonu belirle
+                // Set target position if distance is greater than minimum distance
                 if (distanceToPlayer > stopDistance)
                 {
                     agent.SetDestination(playerPosition);
                 }
                 else
                 {
-                    // NPC durduruluyor, çünkü yeterince yakın
+                    // Stop NPC as it is close enough
                     agent.SetDestination(transform.position);
+
+                    // Push the player position away to keep distance
+                    Vector3 directionAwayFromNPC = (playerPosition - transform.position).normalized;
+                    Vector3 newPosition = transform.position - directionAwayFromNPC * keepDistance;
+                    newPosition.y = playerPosition.y; // Maintain height
+                    playerPosition = newPosition;
                 }
             }
 
@@ -109,6 +118,7 @@ public class BearNPC : AggressiveAnimalNPC
 
             yield return new WaitForSeconds(0.2f);
         }
+
         ChangeFalseChaseState();
     }
 
@@ -125,11 +135,85 @@ public class BearNPC : AggressiveAnimalNPC
 
     public override void Move()
     {
+        animator.SetBool("isMoving", true);
         Vector3 randomDestination = GetRandomNavMeshPosition(transform.position, wanderDistance);
         agent.SetDestination(randomDestination);
 
         StartCoroutine(WaitToReachDestination());
     }
+
+    protected Vector3 GetRandomNavMeshPosition(Vector3 origin, float distance)
+    {
+
+        while (true)
+        {
+            Vector3 randomDirection = Random.insideUnitSphere * distance;
+            randomDirection += origin;
+            NavMeshHit navMeshHit;
+
+            // Check if the random direction hits a NavMesh area and is not hitting an obstacle
+            if (NavMesh.SamplePosition(randomDirection, out navMeshHit, distance, NavMesh.AllAreas) && !IsPositionBlockedByObstacle(navMeshHit.position))
+            {
+                return navMeshHit.position;
+            }
+        }
+
+        return origin;
+    }
+
+    private bool IsPositionBlockedByObstacle(Vector3 position)
+    {
+        // Cast a sphere to check for obstacles around the given position
+        Collider[] hitColliders = Physics.OverlapSphere(position, 1.0f);
+
+        foreach (Collider col in hitColliders)
+        {
+            // Check if the collider belongs to a NavMesh obstacle
+            NavMeshObstacle obstacle = col.GetComponent<NavMeshObstacle>();
+            if (obstacle != null)
+            {
+                return true; // Position is blocked by an obstacle
+            }
+        }
+
+        return false; // Position is not blocked by any obstacle
+    }
+
+    private IEnumerator WaitToReachDestination()
+    {
+        float walkElapsedTime = 0;
+        Vector3 firstPos = transform.position;
+        Vector3 secondPos;
+        float startTime = Time.time;
+
+        while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance && agent.isActiveAndEnabled)
+        {
+            if (Time.time - startTime >= maxWalkTime)
+            {
+                agent.ResetPath();
+                animator.SetBool("isMoving", false); // Ensure isMoving is reset
+                yield break;
+            }
+
+            if ((walkElapsedTime += Time.deltaTime) > 1f)
+            {
+                walkElapsedTime = 0;
+                secondPos = transform.position;
+
+                if (secondPos == firstPos)
+                {
+                    //WAITING
+                    agent.ResetPath();
+                    animator.SetBool("isMoving", false); // Ensure isMoving is reset
+                    yield break;
+                }
+            }
+
+            yield return null;
+        }
+        animator.SetBool("isMoving", false);
+    }
+
 
     public override void Run()
     {
@@ -142,42 +226,12 @@ public class BearNPC : AggressiveAnimalNPC
         float waitTime = Random.Range(idleTime / 2, idleTime * 2);
         yield return new WaitForSeconds(waitTime);
         animator.SetBool("isMoving", true);
+        Move(); // Initiates movement
     }
 
-    protected Vector3 GetRandomNavMeshPosition(Vector3 origin, float distance)
-    {
-        for (int i = 0; i < 5; i++)
-        {
-            Vector3 randomDirection = Random.insideUnitSphere * distance;
-            randomDirection += origin;
-            NavMeshHit navMeshHit;
 
-            if (NavMesh.SamplePosition(randomDirection, out navMeshHit, distance, NavMesh.AllAreas))
-            {
-                return navMeshHit.position;
-            }
-        }
-
-        return origin;
-    }
 
     //----------------------------------------------------
-    private IEnumerator WaitToReachDestination()
-    {
-        float startTime = Time.time;
-
-        while (agent.pathPending || agent.remainingDistance > agent.stoppingDistance && agent.isActiveAndEnabled)
-        {
-            if (Time.time - startTime >= maxWalkTime)
-            {
-                agent.ResetPath();
-                yield break;
-            }
-
-            yield return null;
-        }
-        animator.SetBool("isMoving", false);
-    }
 
     //--------------------------------------------------------
     IEnumerator AnimalRunning()
@@ -247,7 +301,7 @@ public class BearNPC : AggressiveAnimalNPC
         playerInDangerArea = false;
         isFollowingPlayer = false;
         animator.SetBool("isFollowingPlayer", false);
-        animator.SetBool("isVisible", false);
+        animator.SetBool("isMoving", false); // Ensure isMoving is reset
     }
 
     public void SmoothRotateTowardsPlayer()

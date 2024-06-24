@@ -6242,7 +6242,8 @@ GameObject:
   - component: {fileID: 3844427002849269384}
   - component: {fileID: 2168431715665502260}
   - component: {fileID: 1915373085472183312}
-  m_Layer: 0
+  - component: {fileID: 1847001609776409966}
+  m_Layer: 10
   m_Name: Sheep
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6264,7 +6265,7 @@ Transform:
   - {fileID: 7700542482715002567}
   - {fileID: 100712264042893338}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &7846958100907382704
 BoxCollider:
@@ -6378,7 +6379,7 @@ AudioSource:
   Priority: 128
   DopplerLevel: 1
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 8.054993
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0
@@ -6470,14 +6471,15 @@ MonoBehaviour:
   currentHealth: 0
   maxHealth: 80
   soundChannel: {fileID: 3417939153553047337}
-  sheepHit: {fileID: 8300000, guid: 06ef16bbb22d20946b1575f511cfd81b, type: 3}
-  sheepDie: {fileID: 8300000, guid: d9134a166136b0e47b1dac0d8913ec49, type: 3}
+  hit: {fileID: 8300000, guid: 06ef16bbb22d20946b1575f511cfd81b, type: 3}
+  die: {fileID: 8300000, guid: d9134a166136b0e47b1dac0d8913ec49, type: 3}
   animator: {fileID: 7438331738296618121}
   bloodParticle: {fileID: 5381508826579514201}
   animalType: 0
   isDead: 0
   sheepNPC: {fileID: 0}
   bearNPC: {fileID: 0}
+  animalSound: {fileID: 1847001609776409966}
 --- !u!114 &8298766516720353286
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6559,7 +6561,104 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 0}
   proximityDistance: 20
+  isInAttackRange: 0
   animator: {fileID: 7438331738296618121}
+--- !u!82 &1847001609776409966
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8114761603742023902}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 8300000, guid: 3dd99f801fe25674285170d63a75344c, type: 3}
+  m_PlayOnAwake: 0
+  m_Volume: 0.277
+  m_Pitch: 1.55
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 8.100895
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!1 &8590513989523331857
 GameObject:
   m_ObjectHideFlags: 0

@@ -21,13 +21,13 @@ public class PlayerMovementController : MonoBehaviour
 
     Vector3 velocity;
 
-    bool isGrounded;
+    public bool isGrounded;
 
     public bool isSwimming;
     public float swimmingGravity = -0.5f;
 
     //GRASS SOUNDFX
-    private Vector3 lastPos = new Vector3(0,0,0);
+    private Vector3 lastPos = new Vector3(0, 0, 0);
     public bool isMoving;
     public bool isUnderWater;
 
@@ -45,11 +45,59 @@ public class PlayerMovementController : MonoBehaviour
         {
             Movement();
         }
-        
+
     }
 
     void Movement()
     {
+
+
+        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
+
+        if (isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;
+        }
+
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
+
+        Vector3 move = transform.right * x + transform.forward * z;
+
+        // Zıplama kontrolü
+        if (Input.GetButtonDown("Jump") && isGrounded && PlayerState.Instance.canJump)
+        {
+            SoundManager.Instance.PlaySound(SoundManager.Instance.jumpSound);
+            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
+            PlayerState.Instance.currentEnergy -= PlayerState.Instance.jumpEnergyLoss;
+        }
+
+        // Koşma ve yürüme kontrolü
+        if (Input.GetKey(KeyCode.LeftShift) && PlayerState.Instance.canRun && (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D)))
+        {
+            characterController.Move(move * runSpeed * Time.deltaTime); // Koşma hızı
+        }
+        else if (move.magnitude > 0)
+        {
+            characterController.Move(move * movementSpeed * Time.deltaTime); // Normal yürüme hızı
+        }
+
+        velocity.y += gravity * Time.deltaTime;
+        characterController.Move(velocity * Time.deltaTime);
+
+
+        //IS PLAYER HUNGRY CONTROL => IF HUNGRY => CANT MOVE FAST
+        if (PlayerState.Instance.isPlayerHungry)
+        {
+            movementSpeed = maxMovementSpeed / 2;
+            runSpeed = movementSpeed;
+        }
+        else
+        {
+            movementSpeed = maxMovementSpeed;
+            runSpeed = maxRunSpeed;
+        }
+
         if (isSwimming)
         {
             if (isUnderWater)
@@ -66,51 +114,9 @@ public class PlayerMovementController : MonoBehaviour
             gravity = walkingGravity;
         }
 
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-
-        if (isGrounded && velocity.y < 0)
-        {
-            velocity.y = -2f;
-        }
 
 
-        //IS PLAYER HUNGRY CONTROL => IF HUNGRY => CANT MOVE FAST
-        if (PlayerState.Instance.isPlayerHungry)
-        {
-            movementSpeed = maxMovementSpeed/2;
-            runSpeed = movementSpeed;
-        }
-        else
-        {
-            movementSpeed = maxMovementSpeed;
-            runSpeed = maxRunSpeed;
-        }
 
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
-
-        Vector3 move = transform.right * x + transform.forward * z;
-
-        if (Input.GetKey(KeyCode.LeftShift) && PlayerState.Instance.canRun)
-        {
-            characterController.Move(move * runSpeed * Time.deltaTime); // Koşma hızı
-        }
-        else
-        {
-            characterController.Move(move * movementSpeed * Time.deltaTime); // Normal yürüme hızı
-            
-        }
-
-
-        if (Input.GetButtonDown("Jump") && isGrounded && PlayerState.Instance.canJump)
-        {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravity);
-            PlayerState.Instance.currentEnergy -= PlayerState.Instance.jumpEnergyLoss;
-        }
-
-        velocity.y += gravity * Time.deltaTime;
-
-        characterController.Move(velocity * Time.deltaTime);
 
 
         //WALK SFX

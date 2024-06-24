@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerState : MonoBehaviour
 {
@@ -48,6 +49,12 @@ public class PlayerState : MonoBehaviour
 
     public float outOfAirDamagePerSecond = 5f;
 
+    public Animator hitEffectAnimator;
+
+    private float fullnessElapsedTimeForIncreaseHealth = 0;
+
+    private bool isHearthSoundsPlaying = false;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -76,9 +83,29 @@ public class PlayerState : MonoBehaviour
         UpdateJumpAndRun();
         LimitEnergyIncreaseSpeedWhenHungry();
 
-        if (Input.GetKeyDown(KeyCode.H))
+        if(currentHealth<=0)
+            SceneManager.LoadScene("Dead");
+
+        hitEffectAnimator.SetFloat("playerHealth",currentHealth);
+
+        if(currentFullnes>=90 && currentHealth< 100)
         {
-            currentFullnes -= 10;
+            if ((fullnessElapsedTimeForIncreaseHealth += Time.deltaTime) > 2f)
+            {
+                currentHealth++;
+                fullnessElapsedTimeForIncreaseHealth = 0;
+            }
+        }
+
+        if (currentHealth<20 && !isHearthSoundsPlaying)
+        {
+            SoundManager.Instance.PlaySound(SoundManager.Instance.hearthSound);
+            isHearthSoundsPlaying = true;
+        }
+        else if (currentHealth>20 && isHearthSoundsPlaying)
+        {
+            SoundManager.Instance.hearthSound.Stop();
+            isHearthSoundsPlaying = false;
         }
     }
 

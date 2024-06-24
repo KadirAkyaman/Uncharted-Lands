@@ -18,6 +18,15 @@ public class SoundManager : MonoBehaviour
     public AudioSource startingZoneBGMusic;
     public AudioSource natureSounds;
 
+    public AudioSource hearthSound;
+
+    public AudioSource bearAttackSound;
+    public AudioSource playerHitSound;
+
+    public AudioSource jumpSound;
+
+    public AudioSource eatSound;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
